@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Fayl yaratish</h1>
+    <form action="/database" method="POST">
+    <label for="data">CREATE DATABASE</label>
+    <input type="text" name="create" id="data">
+    <label for="data">anything varchar(50)</label>
+    <input type="submit" value="Create Database">
+    </form>
+    <h1>List yaratish</h1>
+    <form action="/database" method="POST">
+    <input type="text" name="alter">
+    <input type="text" name="column">
+    <select name="type">
+        <option value="VARCHAR">VARCHAR</option>
+        <option value="VARCHAR NOT NULL">VARCHAR NOT NULL</option>
+        <option value="SERIAL">SERIAL</option>
+      </select>
+    <input type="submit" value="Create Column">
+    
+    </form>
+</body>
+</html>

@@ -16,6 +16,8 @@ func main() {
 
 	http.HandleFunc("/", index)
 	http.HandleFunc("/Olmazor", olmazor)
+	http.HandleFunc("/database", datab)
+	http.HandleFunc("/excel", wrexcel)
 	http.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
 	http.ListenAndServe("192.168.8.34:3030", nil)
 }

@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/source/bootstrap.min.css">
+    <script src="/source/jquery.min.js"></script>
+    <script src="/source/popper.min.js"></script>
+    <script src="/source/bootstrap.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Olmazor</title>
 </head>
 <body>
-    <form action="/Olmazor" method="POST">
-    <input type="text" name="name" results=5 autosave=some_unique_value>
-    
-    <input type="submit" value="go">
-    </form>
-    <form method="POST" action="/Olmazor">
-
-<table>
-    <tr>
-        <td>
-            <input type="text" name="name"  />
-            <button type="submit" >ok</button>
-        </td>
-        <td>
-            <input type="text" name="qwe"  />
-            <button type="button" >ok</button>
-        </td>
-    </tr>
-</table>
-
-</form>
+    <div class="container">
+        <h2>Button Styles</h2>
+        <button type="button" class="btn">Basic</button>
+        <button type="button" class="btn btn-primary">Primary</button>
+        <button type="button" class="btn btn-secondary">Secondary</button>
+        <button type="button" class="btn btn-success">Success</button>
+        <button type="button" class="btn btn-info">Info</button>
+        <button type="button" class="btn btn-warning">Warning</button>
+        <button type="button" class="btn btn-danger">Danger</button>
+        <button type="button" class="btn btn-dark">Dark</button>
+        <button type="button" class="btn btn-light">Light</button>
+        <button type="button" class="btn btn-link">Link</button>      
+      </div>
 </body>
 </html>
