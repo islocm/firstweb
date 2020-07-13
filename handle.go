@@ -13,6 +13,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tem.Execute(w, nil)
+
 }
 
 func olmazor(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +31,27 @@ func olmazor(w http.ResponseWriter, r *http.Request) {
 
 }
 func datab(w http.ResponseWriter, r *http.Request) {
+	tabledb, err := db.Prepare(`SELECT table_name
+	FROM information_schema.tables
+	WHERE table_type='BASE TABLE'
+	AND table_schema='public';`)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	var asd Name
+	rows, _ := tabledb.Query()
+	for rows.Next() {
+		var qwe string
+		rows.Scan(&qwe)
+
+		asd = Name{[]string{qwe}}
+		fmt.Println(asd)
+	}
+
+	// data := ViewData{
+	// 	Tableg: []string{tableqq},
+	// }
 	x := r.FormValue("create")
 	y := r.FormValue("alter")
 	z := r.FormValue("column")
@@ -40,7 +62,7 @@ func datab(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tem.Execute(w, nil)
+	tem.Execute(w, asd)
 	if x != "" {
 		foo := fmt.Sprintf(`CREATE TABLE %s (anything varchar(50));`, x)
 		_, err = db.Exec(foo)
@@ -63,8 +85,7 @@ func datab(w http.ResponseWriter, r *http.Request) {
 }
 
 func wrexcel(w http.ResponseWriter, r *http.Request) {
-	asdf := r.FormValue("exwork")
-	fmt.Fprint(w, asdf)
+
 	tem, err := template.ParseFiles("template/excel.html")
 	if err != nil {
 		fmt.Println(err)

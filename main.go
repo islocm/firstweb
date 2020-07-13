@@ -7,6 +7,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Name is ...
+type Name struct {
+	LName []string
+}
+
 func main() {
 	e := connection()
 	if e != nil {
