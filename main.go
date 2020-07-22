@@ -23,6 +23,7 @@ func main() {
 	http.HandleFunc("/Olmazor", olmazor)
 	http.HandleFunc("/database", datab)
 	http.HandleFunc("/excel", wrexcel)
+	http.HandleFunc("/execdb", hidedb)
 	http.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
-	http.ListenAndServe("192.168.8.34:3030", nil)
+	http.ListenAndServe(":3030", nil)
 }
