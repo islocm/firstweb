@@ -103,7 +103,7 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 	writer := multipart.NewWriter(body)
 
 	r.Header.Add("Content-Type", writer.FormDataContentType())
-	r.ParseMultipartForm(10 >> 20)
+	r.ParseMultipartForm(32 << 20)
 	file, header, err := r.FormFile("exwork")
 	if err != nil {
 		fmt.Println(err)
@@ -118,19 +118,15 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 
 	io.Copy(f, file)
 
-	_, err = excelize.OpenFile(header.Filename)
+	exfile, err := excelize.OpenFile(header.Filename)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	file.Close()
-	f.Close()
-	err = os.Remove(header.Filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	// rows, err := f.GetRows("TDSheet")
+	qwe := exfile.GetSheetList()
+	fmt.Println(qwe)
+	// var sheetname *excelize.Rows
+	// rows, err := exfile.GetRows(sheet)
 
 	// for _, row := range rows {
 	// 	var a []string
@@ -149,6 +145,13 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 	// 	break
 	// }
 	// fmt.Println(f)
+	file.Close()
+	f.Close()
+	err = os.Remove(header.Filename)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 }
 
