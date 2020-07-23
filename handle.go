@@ -19,6 +19,20 @@ func index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tem.Execute(w, nil)
+	rows := [][]string{{"qwe", "hayr", "tun"}, {"qwe1", "saqwe", "sadag"}, {"asdqq", "tekin", "arzon"}}
+	for _, row := range rows {
+		getinfo, err := db.Query(`select qaror from qaror`)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		for getinfo.Next() {
+			var asd string
+			getinfo.Scan(&asd)
+			fmt.Println(asd)
+
+		}
+	}
 
 }
 
@@ -88,6 +102,7 @@ func datab(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+
 }
 
 func wrexcel(w http.ResponseWriter, r *http.Request) {
@@ -123,27 +138,37 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	qwe := exfile.GetSheetList()
-	fmt.Println(qwe)
-	// var sheetname *excelize.Rows
-	// rows, err := exfile.GetRows(sheet)
+	getsheet := exfile.GetSheetList()
 
-	// for _, row := range rows {
-	// 	var a []string
-	// 	// qq = fmt.Printf(" (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", row)
-	// 	a = row
+	rows, err := exfile.GetRows(getsheet[0])
 
-	// 	qq := fmt.Sprintf("INSERT INTO kadastr (islocm,islocm1,islocm2,islocm3,islocm4,islocm5,islocm6,islocm7,islocm8,islocm9,islocm10,islocm12,islocm13,islocm14,islocm15,islocm16,islocm17,islocm18,islocm19,islocm20,islocm21,islocm22,islocm23,islocm24,islocm25) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17], a[18], a[19], a[20], a[21], a[22], a[23], a[24])
+	for _, _ = range rows {
+		getinfo, err := db.Query(`select qaror from qaror`)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		for getinfo.Next() {
+			var asd string
+			getinfo.Scan(&asd)
+			fmt.Println(asd)
+		}
 
-	// 	fmt.Println(qq)
-	// 	q, err := db.Exec(qq)
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 		return
-	// 	}
-	// 	fmt.Println(q)
-	// 	break
-	// }
+		// 	var a []string
+		// 	// qq = fmt.Printf(" (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", row)
+		// 	a = row
+
+		// 	qq := fmt.Sprintf("INSERT INTO kadastr (islocm,islocm1,islocm2,islocm3,islocm4,islocm5,islocm6,islocm7,islocm8,islocm9,islocm10,islocm12,islocm13,islocm14,islocm15,islocm16,islocm17,islocm18,islocm19,islocm20,islocm21,islocm22,islocm23,islocm24,islocm25) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17], a[18], a[19], a[20], a[21], a[22], a[23], a[24])
+
+		// 	fmt.Println(qq)
+		// 	q, err := db.Exec(qq)
+		// 	if err != nil {
+		// 		fmt.Println(err)
+		// 		return
+		// 	}
+		// 	fmt.Println(q)
+		// 	break
+	}
 	// fmt.Println(f)
 	file.Close()
 	f.Close()
