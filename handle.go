@@ -20,27 +20,81 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 	tem.Execute(w, nil)
 	rows := [][]string{{"qwe", "hayr", "tun"}, {"qwe1", "saqwe", "sadag"}, {"asdqq", "tekin", "arzon"}}
+
 	for _, row := range rows {
+		var dbval []string
 		getinfo, err := db.Query(`select qaror from qaror`)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		for getinfo.Next() {
-			var asd string
-			getinfo.Scan(&asd)
-			fmt.Println(asd)
+			var asval string
+			getinfo.Scan(&asval)
+			dbval = append(dbval, asval)
+
+			// for getinfo.Next() {
+			// 	var asd string
+			// 	getinfo.Scan(&asd)
+			// 	fmt.Println(asd)
+			// 	if row[0] == asd {
+			// 		dbsorov := fmt.Sprintf(`UPDATE qaror
+			// 		SET qaror = %s,
+			// 		SET adres = %s,
+			// 		SET buz = %s
+			// 		WHERE qaror = %s;`, row[0], row[1], row[2], asd)
+
+			// 		_, err = db.Exec(dbsorov)
+			// 		if err != nil {
+			// 			fmt.Println(err)
+			// 			return
+
+			// 		}
+			// 		return
+
+			// 	} else if len(rows)-1 == count {
+			// 		fmt.Println("salom")
+			// 	}
+
+			// }
 
 		}
-	}
 
+		for lentarget, valtarget := range dbval {
+
+			if valtarget == row[0] {
+				dbsorov := fmt.Sprintf(`UPDATE qaror
+					SET adres = '%s', buz = '%s'
+					WHERE qaror = '%s';`, row[1], row[2], valtarget)
+
+				resultdb, err := db.Exec(dbsorov)
+				if err != nil {
+					fmt.Println(err.Error())
+					return
+
+				}
+				fmt.Println(resultdb)
+				break
+
+			} else if len(dbval)-1 == lentarget {
+				dbsorov1 := fmt.Sprintf(`INSERT INTO qaror (qaror, adres, buz)
+				VALUES('%s', '%s', '%s');`, row[0], row[1], row[2])
+				_, err = db.Exec(dbsorov1)
+				if err != nil {
+					fmt.Println(err)
+					return
+
+				}
+
+			}
+
+		}
+
+	}
 }
 
 func olmazor(w http.ResponseWriter, r *http.Request) {
-	x := r.FormValue("name")
-	y := r.FormValue("qwe")
-	fmt.Println(x)
-	fmt.Println(y)
+
 	tem, err := template.ParseFiles("template/Olmazor.html")
 	if err != nil {
 		fmt.Println(err)
@@ -138,37 +192,37 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	getsheet := exfile.GetSheetList()
+	_ = exfile.GetSheetList()
 
-	rows, err := exfile.GetRows(getsheet[0])
+	// rows, err := exfile.GetRows(getsheet[0])
 
-	for _, _ = range rows {
-		getinfo, err := db.Query(`select qaror from qaror`)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		for getinfo.Next() {
-			var asd string
-			getinfo.Scan(&asd)
-			fmt.Println(asd)
-		}
+	// for _, _ = range rows {
+	// 	getinfo, err := db.Query(`select qaror from qaror`)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		return
+	// 	}
+	// 	for getinfo.Next() {
+	// 		var asd string
+	// 		getinfo.Scan(&asd)
+	// 		fmt.Println(asd)
+	// 	}
 
-		// 	var a []string
-		// 	// qq = fmt.Printf(" (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", row)
-		// 	a = row
+	// 	var a []string
+	// 	// qq = fmt.Printf(" (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", row)
+	// 	a = row
 
-		// 	qq := fmt.Sprintf("INSERT INTO kadastr (islocm,islocm1,islocm2,islocm3,islocm4,islocm5,islocm6,islocm7,islocm8,islocm9,islocm10,islocm12,islocm13,islocm14,islocm15,islocm16,islocm17,islocm18,islocm19,islocm20,islocm21,islocm22,islocm23,islocm24,islocm25) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17], a[18], a[19], a[20], a[21], a[22], a[23], a[24])
+	// 	qq := fmt.Sprintf("INSERT INTO kadastr (islocm,islocm1,islocm2,islocm3,islocm4,islocm5,islocm6,islocm7,islocm8,islocm9,islocm10,islocm12,islocm13,islocm14,islocm15,islocm16,islocm17,islocm18,islocm19,islocm20,islocm21,islocm22,islocm23,islocm24,islocm25) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');", a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17], a[18], a[19], a[20], a[21], a[22], a[23], a[24])
 
-		// 	fmt.Println(qq)
-		// 	q, err := db.Exec(qq)
-		// 	if err != nil {
-		// 		fmt.Println(err)
-		// 		return
-		// 	}
-		// 	fmt.Println(q)
-		// 	break
-	}
+	// 	fmt.Println(qq)
+	// 	q, err := db.Exec(qq)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		return
+	// 	}
+	// 	fmt.Println(q)
+	// 	break
+	// }
 	// fmt.Println(f)
 	file.Close()
 	f.Close()
