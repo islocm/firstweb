@@ -167,9 +167,73 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	_ = exfile.GetSheetList()
+	getsheet := exfile.GetSheetList()
 
-	// rows, err := exfile.GetRows(getsheet[0])
+	rows, err := exfile.GetRows(getsheet[0])
+
+	for _, row := range rows {
+		var dbval []string
+		getinfo, err := db.Query(`select kod from kadastr`)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		for getinfo.Next() {
+			var asval string
+			getinfo.Scan(&asval)
+			dbval = append(dbval, asval)
+
+		}
+		fmt.Println(dbval)
+		fmt.Println(row)
+		if dbval != nil {
+			for lentarget, valtarget := range dbval {
+
+				if valtarget == row[1] {
+					dbsorov := fmt.Sprintf(`UPDATE kadastr
+					SET mulk = '%s', mahalla = '%s', egalik= '%s', pasport = '%s', hujjat = '%s',
+					regkitob = '%s', kitobbet = '%s', gosraqam = '%s', sananomer = '%s', miqdor = '%s', xona = '%s', sf = '%s',
+					sv = '%s', po = '%s', pj = '%s', pp = '%s', pzuo = '%s', pzuz = '%s',
+					pzuzaxvat = '%s', pzupd = '%s', pzupp = '%s', npp = '%s',
+					npk = '%s', spp = '%s', spk = '%s'
+					WHERE kod = '%s';`, row[0], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25], valtarget)
+
+					resultdb, err := db.Exec(dbsorov)
+					if err != nil {
+						fmt.Println(err.Error())
+						return
+
+					}
+					fmt.Println(resultdb)
+					break
+
+				} else if len(dbval)-1 == lentarget {
+					dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
+				VALUES('%s', '%s', '%s', '%q', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
+					_, err = db.Exec(dbsorov1)
+					if err != nil {
+						fmt.Println(err)
+						return
+
+					}
+					fmt.Println("bajarilvotti")
+
+				}
+
+			}
+		} else {
+			dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
+				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
+			_, err = db.Exec(dbsorov1)
+			if err != nil {
+				fmt.Println(err)
+				return
+
+			}
+
+		}
+
+	}
 
 	// for _, _ = range rows {
 	// 	getinfo, err := db.Query(`select qaror from qaror`)
@@ -212,32 +276,32 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 func hidedb(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Database hidding query"))
 	_, err := db.Exec(`CREATE TABLE "kadastr" (
-		"Недвижимость" varchar(255) NOT NULL,
-		"Код" varchar(255) NOT NULL,
-		"Махалля" varchar(255) NOT NULL,
-		"Правообладатель" varchar(255) NOT NULL,
-		"Паспорт" varchar(255),
-		"Сопроводительный документ" varchar(255),
-		"Рег. книга" varchar(50),
-		"Рег. книга стр." varchar(50),
-		"Гос. номер" varchar(50),
-		"Дата гос. номера" varchar(50),
-		"Итого Кол-во" varchar(50),
-		"Итого Комнаты" varchar(50),
-		"Стоимость Фактическая" varchar(50),
-		"Стоимость Восстановительная" varchar(50),
-		"Площадь Общая" varchar(50),
-		"Площадь Жилая" varchar(50),
-		"Площадь Полезная" varchar(50),
-		"Площадь земельного участка Общая" varchar(50),
-		"Площадь земельного участка Законная" varchar(50),
-		"Площадь земельного участка Захват" varchar(50),
-		"Площадь земельного участка Под двором" varchar(50),
-		"Площадь земельного участка Под постройкой" varchar(50),
-		"Нежилое помещение Площадь" varchar(50),
-		"Нежилое помещение Комнаты" varchar(50),
-		"Самовольная постройка Площадь" varchar(50),
-		"Самовольная постройка Комнаты" varchar(50)
+		"mulk" varchar(255) NOT NULL,
+		"kod" varchar(255) NOT NULL,
+		"mahalla" varchar(255) NOT NULL,
+		"egalik" varchar(255) NOT NULL,
+		"pasport" varchar(255),
+		"hujjat" varchar(255),
+		"regkitob" varchar(50),
+		"regkitob стр." varchar(50),
+		"gosraqam" varchar(50),
+		"sananomer" varchar(50),
+		"miqdor" varchar(50),
+		"xona" varchar(50),
+		"sf" varchar(50),
+		"sv" varchar(50),
+		"po" varchar(50),
+		"pj" varchar(50),
+		"pp" varchar(50),
+		"pzuo" varchar(50),
+		"pzuzая" varchar(50),
+		"pzuzaxvat" varchar(50),
+		"pzupdором" varchar(50),
+		"pzuppстройкой" varchar(50),
+		"npp" varchar(50),
+		npk" varchar(50),
+		"spp" varchar(50),
+		"spk" varchar(50)
 	) WITH (
 	  OIDS=FALSE
 	);
