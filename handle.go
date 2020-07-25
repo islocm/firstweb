@@ -211,41 +211,39 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 
 func hidedb(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Database hidding query"))
-	_, err := db.Exec(`CREATE TABLE "qaror" (
-		"qaror" character varying NOT NULL,
-		CONSTRAINT "qaror_pk" PRIMARY KEY ("qaror")
+	_, err := db.Exec(`CREATE TABLE "kadastr" (
+		"Недвижимость" varchar(255) NOT NULL,
+		"Код" varchar(255) NOT NULL,
+		"Махалля" varchar(255) NOT NULL,
+		"Правообладатель" varchar(255) NOT NULL,
+		"Паспорт" varchar(255),
+		"Сопроводительный документ" varchar(255),
+		"Рег. книга" varchar(50),
+		"Рег. книга стр." varchar(50),
+		"Гос. номер" varchar(50),
+		"Дата гос. номера" varchar(50),
+		"Итого Кол-во" varchar(50),
+		"Итого Комнаты" varchar(50),
+		"Стоимость Фактическая" varchar(50),
+		"Стоимость Восстановительная" varchar(50),
+		"Площадь Общая" varchar(50),
+		"Площадь Жилая" varchar(50),
+		"Площадь Полезная" varchar(50),
+		"Площадь земельного участка Общая" varchar(50),
+		"Площадь земельного участка Законная" varchar(50),
+		"Площадь земельного участка Захват" varchar(50),
+		"Площадь земельного участка Под двором" varchar(50),
+		"Площадь земельного участка Под постройкой" varchar(50),
+		"Нежилое помещение Площадь" varchar(50),
+		"Нежилое помещение Комнаты" varchar(50),
+		"Самовольная постройка Площадь" varchar(50),
+		"Самовольная постройка Комнаты" varchar(50)
 	) WITH (
 	  OIDS=FALSE
 	);
 	
 	
 	
-	CREATE TABLE "malumot" (
-		"Data" DATE NOT NULL,
-		"resheniya" character varying NOT NULL,
-		"vladelets" character varying NOT NULL,
-		"adres" character varying NOT NULL,
-		CONSTRAINT "malumot_pk" PRIMARY KEY ("adres")
-	) WITH (
-	  OIDS=FALSE
-	);
-	
-	
-	
-	CREATE TABLE "kompensatsiya" (
-		"adresg" character varying NOT NULL,
-		"kompensatsiya" character varying NOT NULL,
-		"xona" character varying NOT NULL
-	) WITH (
-	  OIDS=FALSE
-	);
-	
-	
-	
-	
-	ALTER TABLE "malumot" ADD CONSTRAINT "malumot_fk0" FOREIGN KEY ("resheniya") REFERENCES "qaror"("qaror");
-	
-	ALTER TABLE "kompensatsiya" ADD CONSTRAINT "kompensatsiya_fk0" FOREIGN KEY ("adresg") REFERENCES "malumot"("adres");
 	`)
 	if err != nil {
 		fmt.Println(err)
