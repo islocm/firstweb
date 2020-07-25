@@ -33,31 +33,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 			getinfo.Scan(&asval)
 			dbval = append(dbval, asval)
 
-			// for getinfo.Next() {
-			// 	var asd string
-			// 	getinfo.Scan(&asd)
-			// 	fmt.Println(asd)
-			// 	if row[0] == asd {
-			// 		dbsorov := fmt.Sprintf(`UPDATE qaror
-			// 		SET qaror = %s,
-			// 		SET adres = %s,
-			// 		SET buz = %s
-			// 		WHERE qaror = %s;`, row[0], row[1], row[2], asd)
-
-			// 		_, err = db.Exec(dbsorov)
-			// 		if err != nil {
-			// 			fmt.Println(err)
-			// 			return
-
-			// 		}
-			// 		return
-
-			// 	} else if len(rows)-1 == count {
-			// 		fmt.Println("salom")
-			// 	}
-
-			// }
-
 		}
 
 		for lentarget, valtarget := range dbval {
