@@ -192,7 +192,7 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 				if valtarget == row[1] {
 					row[3] = strings.ReplaceAll(row[3], "'", "")
 					row[4] = strings.ReplaceAll(row[4], "'", "")
-					row[5] = strings.ReplaceAll(row[5], "г.", "")
+
 					dbsorov := fmt.Sprintf(`UPDATE kadastr
 					SET mulk = '%s', mahalla = '%s', egalik= '%s', pasport = '%s', hujjat = '%s',
 					regkitob = '%s', kitobbet = '%s', gosraqam = '%s', sananomer = '%s', miqdor = '%s', xona = '%s', sf = '%s',
@@ -215,7 +215,6 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 				} else if len(dbval)-1 == lentarget {
 					row[3] = strings.ReplaceAll(row[3], "'", "")
 					row[4] = strings.ReplaceAll(row[4], "'", "")
-					row[5] = strings.ReplaceAll(row[5], "г.", "")
 
 					dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
 				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
