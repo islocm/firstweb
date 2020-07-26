@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
@@ -170,8 +171,8 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 	getsheet := exfile.GetSheetList()
 
 	rows, err := exfile.GetRows(getsheet[0])
-
-	for _, row := range rows {
+	fmt.Println(len(rows))
+	for newcount, row := range rows {
 		var dbval []string
 		getinfo, err := db.Query(`select kod from kadastr`)
 		if err != nil {
@@ -184,12 +185,14 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 			dbval = append(dbval, asval)
 
 		}
-		fmt.Println(dbval)
-		fmt.Println(row)
+
 		if dbval != nil {
 			for lentarget, valtarget := range dbval {
 
 				if valtarget == row[1] {
+					row[3] = strings.ReplaceAll(row[3], "'", "")
+					row[4] = strings.ReplaceAll(row[4], "'", "")
+					row[5] = strings.ReplaceAll(row[5], "г.", "")
 					dbsorov := fmt.Sprintf(`UPDATE kadastr
 					SET mulk = '%s', mahalla = '%s', egalik= '%s', pasport = '%s', hujjat = '%s',
 					regkitob = '%s', kitobbet = '%s', gosraqam = '%s', sananomer = '%s', miqdor = '%s', xona = '%s', sf = '%s',
@@ -197,26 +200,32 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 					pzuzaxvat = '%s', pzupd = '%s', pzupp = '%s', npp = '%s',
 					npk = '%s', spp = '%s', spk = '%s'
 					WHERE kod = '%s';`, row[0], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25], valtarget)
-
-					resultdb, err := db.Exec(dbsorov)
+					if newcount > 34550 {
+						fmt.Println(dbsorov)
+					}
+					_, err = db.Exec(dbsorov)
 					if err != nil {
 						fmt.Println(err.Error())
 						return
 
 					}
-					fmt.Println(resultdb)
+
 					break
 
 				} else if len(dbval)-1 == lentarget {
+					row[3] = strings.ReplaceAll(row[3], "'", "")
+					row[4] = strings.ReplaceAll(row[4], "'", "")
+					row[5] = strings.ReplaceAll(row[5], "г.", "")
+
 					dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
-				VALUES('%s', '%s', '%s', '%q', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
+				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
+					fmt.Println(dbsorov1)
 					_, err = db.Exec(dbsorov1)
 					if err != nil {
 						fmt.Println(err)
 						return
 
 					}
-					fmt.Println("bajarilvotti")
 
 				}
 
