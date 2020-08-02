@@ -70,15 +70,44 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func olmazor(w http.ResponseWriter, r *http.Request) {
+	// var name string
+	// row := db.QueryRow(`SELECT justify_hours(INTERVAL '1000 s');`)
+	// row.Scan(&name)
 
-	tem, err := template.ParseFiles("template/Olmazor.html")
-	if err != nil {
-		fmt.Println(err)
-		return
+	// fmt.Println(name)
+
+	username := "islocm"
+	password := "60nurilla"
+	// fmt.Println(startTime)
+
+	// if startTime < timego[0] {
+	// 	tem, err := template.ParseFiles("template/development.html")
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		return
+	// 	}
+	// 	tem.Execute(w, nil)
+	// } else {
+	if r.FormValue("uname") == username && r.FormValue("psw") == password {
+		tem, err := template.ParseFiles("template/development.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		tem.Execute(w, nil)
+		w.Write([]byte("Hello " + username))
+	} else {
+		tem, err := template.ParseFiles("template/Olmazor.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
 	}
 
-	tem.Execute(w, nil)
-
+	// }
 }
 func datab(w http.ResponseWriter, r *http.Request) {
 	tabledb, err := db.Prepare(`SELECT table_name
@@ -256,39 +285,150 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 func hidedb(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Database hidding query"))
 	_, err := db.Exec(`CREATE TABLE "kadastr" (
-		"mulk" varchar(255) NOT NULL,
-		"kod" varchar(255) NOT NULL,
-		"mahalla" varchar(255) NOT NULL,
-		"egalik" varchar(255) NOT NULL,
-		"pasport" varchar(255),
-		"hujjat" varchar(255),
-		"regkitob" varchar(50),
-		"regkitob стр." varchar(50),
-		"gosraqam" varchar(50),
-		"sananomer" varchar(50),
-		"miqdor" varchar(50),
-		"xona" varchar(50),
-		"sf" varchar(50),
-		"sv" varchar(50),
-		"po" varchar(50),
-		"pj" varchar(50),
-		"pp" varchar(50),
-		"pzuo" varchar(50),
-		"pzuzая" varchar(50),
-		"pzuzaxvat" varchar(50),
-		"pzupdором" varchar(50),
-		"pzuppстройкой" varchar(50),
-		"npp" varchar(50),
-		npk" varchar(50),
-		"spp" varchar(50),
-		"spk" varchar(50)
-	) WITH (
-	  OIDS=FALSE
-	);
-	
-	
-	
-	`)
+	"mulk" varchar(255),
+	"kod" varchar(255),
+	"mahalla" varchar(255),
+	"egalik" varchar(255),
+	"pasport" varchar(255),
+	"hujjat" varchar(255),
+	"regkitob" varchar(50),
+	"kitobbet" varchar(50),
+	"gosraqam" varchar(50),
+	"sananomer" varchar(50),
+	"miqdor" varchar(50),
+	"xona" varchar(50),
+	"sf" varchar(50),
+	"sv" varchar(50),
+	"po" varchar(50),
+	"pj" varchar(50),
+	"pp" varchar(50),
+	"pzuo" varchar(50),
+	"pzuz" varchar(50),
+	"pzuzaxvat" varchar(50),
+	"pzupd" varchar(50),
+	"pzupp" varchar(50),
+	"npp" varchar(50),
+	"npk" varchar(50),
+	"spp" varchar(50),
+	"spk" varchar(50)
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE "import" (
+	"idi" serial,
+	"mulk" varchar(255),
+	"kod" varchar(255),
+	"mahalla" varchar(255),
+	"egalik" varchar(255),
+	"pasport" varchar(255),
+	"hujjat" varchar(255),
+	"regkitob" varchar(50),
+	"kitobbet" varchar(50),
+	"gosraqam" varchar(50),
+	"sananomer" varchar(50),
+	"miqdor" varchar(50),
+	"xona" varchar(50),
+	"sf" varchar(50),
+	"sv" varchar(50),
+	"po" varchar(50),
+	"pj" varchar(50),
+	"pp" varchar(50),
+	"pzuo" varchar(50),
+	"pzuz" varchar(50),
+	"pzuzaxvat" varchar(50),
+	"pzupd" varchar(50),
+	"pzupp" varchar(50),
+	"npp" varchar(50),
+	"npk" varchar(50),
+	"spp" varchar(50),
+	"spk" varchar(50),
+	"datei" TIMESTAMP DEFAULT current_timestamp,
+	"useri" varchar(50),
+	CONSTRAINT "import_pk" PRIMARY KEY ("kod")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE "Selyami" (
+	"ids" serial,
+	"tumans" varchar(255),
+	"kods" varchar(255) NOT NULL,
+	"kompensatsiyas" varchar(255),
+	"sostavs" integer,
+	"huquqs" varchar(255),
+	"xonas" varchar(255),
+	"Izoh" TEXT,
+	"times" TIMESTAMP DEFAULT current_timestamp,
+	"users" varchar(50) NOT NULL,
+	CONSTRAINT "Selyami_pk" PRIMARY KEY ("kods")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE "users" (
+	"tel" varchar(14),
+	"user" varchar(50) NOT NULL,
+	"password" varchar(30) NOT NULL,
+	CONSTRAINT "users_pk" PRIMARY KEY ("user")
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE "compensation" (
+	"datac" TIMESTAMP DEFAULT current_timestamp,
+	"kodc" varchar(255),
+	"oilac" varchar(255),
+	"jonc" varchar(255),
+	"visionc" varchar(255),
+	"manzilc" varchar(255),
+	"xonac" varchar(255),
+	"maydon" varchar(255),
+	"arenda" varchar(255),
+	"protokolc" varchar(255),
+	"qarorc" varchar(255),
+	"orderc" varchar(255)
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+CREATE TABLE "selyamioila" (
+	"idso" serial,
+	"kodso" varchar(255),
+	"kompensatsiyaso" varchar(255),
+	"sostavso" varchar(255),
+	"huquqso" varchar(255),
+	"xonaso" varchar(255),
+	"timeso" TIMESTAMP DEFAULT current_timestamp,
+	"userso" varchar(50)
+) WITH (
+  OIDS=FALSE
+);
+
+
+
+
+ALTER TABLE "import" ADD CONSTRAINT "import_fk0" FOREIGN KEY ("useri") REFERENCES "users"("user");
+
+ALTER TABLE "Selyami" ADD CONSTRAINT "Selyami_fk0" FOREIGN KEY ("users") REFERENCES "users"("user");
+
+
+ALTER TABLE "compensation" ADD CONSTRAINT "compensation_fk0" FOREIGN KEY ("kodc") REFERENCES "Selyami"("kods");
+
+ALTER TABLE "selyamioila" ADD CONSTRAINT "selyamioila_fk0" FOREIGN KEY ("kodso") REFERENCES "Selyami"("kods");
+ALTER TABLE "selyamioila" ADD CONSTRAINT "selyamioila_fk1" FOREIGN KEY ("userso") REFERENCES "users"("user");
+
+`)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -393,4 +533,3 @@ ORDER BY
 	}
 
 }
-
