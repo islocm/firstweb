@@ -71,32 +71,37 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func olmazor(w http.ResponseWriter, r *http.Request) {
 	// var name string
-	// row := db.QueryRow(`SELECT justify_hours(INTERVAL '1000 s');`)
+	// row := db.QueryRow(`select datei from import order by datei desc limit 1;`)
 	// row.Scan(&name)
 
-	// fmt.Println(name)
+	// timego := time.Now().Unix()
 
+	// timepar, err := time.Parse(time.RFC3339, name)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+
+	// gotime := timepar.Unix()
+	// fmt.Println(gotime)
+	// fmt.Println(timego)
 	username := "islocm"
 	password := "60nurilla"
-	// fmt.Println(startTime)
+	// // fmt.Println(startTime)
 
-	// if startTime < timego[0] {
+	// if timego+17400 < gotime {
+
 	// 	tem, err := template.ParseFiles("template/development.html")
 	// 	if err != nil {
 	// 		fmt.Println(err)
 	// 		return
 	// 	}
 	// 	tem.Execute(w, nil)
+
 	// } else {
 	if r.FormValue("uname") == username && r.FormValue("psw") == password {
-		tem, err := template.ParseFiles("template/development.html")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		http.Redirect(w, r, "/spisok", 308)
 
-		tem.Execute(w, nil)
-		w.Write([]byte("Hello " + username))
 	} else {
 		tem, err := template.ParseFiles("template/Olmazor.html")
 		if err != nil {
@@ -108,6 +113,18 @@ func olmazor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// }
+}
+
+func spisok(w http.ResponseWriter, r *http.Request) {
+	if r.FormValue("uname") == "islocm" {
+		tem, err := template.ParseFiles("template/development.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		tem.Execute(w, nil)
+	}
 }
 func datab(w http.ResponseWriter, r *http.Request) {
 	tabledb, err := db.Prepare(`SELECT table_name

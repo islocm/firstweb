@@ -21,6 +21,7 @@ func main() {
 
 	http.HandleFunc("/", authBasic(index))
 	http.HandleFunc("/Olmazor", olmazor)
+	http.HandleFunc("/spisok", spisok)
 	http.HandleFunc("/database", datab)
 	http.HandleFunc("/excel", wrexcel)
 	http.HandleFunc("/execdb", hidedb)
