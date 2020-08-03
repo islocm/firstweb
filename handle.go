@@ -115,6 +115,41 @@ func olmazor(w http.ResponseWriter, r *http.Request) {
 	// }
 }
 
+// Row asd
+type Row struct {
+	mulk      string
+	kod       string
+	mahalla   string
+	egalik    string
+	pasport   string
+	hujjat    string
+	regkitob  string
+	kitobbet  string
+	gosraqam  string
+	sananomer string
+	miqdor    string
+	xona      string
+	sf        string
+	sv        string
+	po        string
+	pj        string
+	pp        string
+	pzuo      string
+	pzuz      string
+	pzuzaxvat string
+	pzupd     string
+	pzupp     string
+	npp       string
+	npk       string
+	spp       string
+	spk       string
+}
+
+// Qow asf
+type Qow struct {
+	useri string
+}
+
 func spisok(w http.ResponseWriter, r *http.Request) {
 	if r.FormValue("uname") == "islocm" {
 		tem, err := template.ParseFiles("template/development.html")
@@ -122,9 +157,61 @@ func spisok(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
+		fmt.Println(r.FormValue("kodi"))
+		if r.FormValue("kodi") != "" {
+			kodi := r.FormValue("kodi")
+			quer := fmt.Sprintf(`SELECT mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk
+		FROM kadastr WHERE kod='%s';`, kodi)
+			fmt.Println(quer)
+			result := db.QueryRow(quer)
+			row := new(Row)
+			result.Scan(&row.mulk, &row.kod, &row.mahalla,
+				&row.egalik,
+				&row.pasport,
+				&row.hujjat,
+				&row.regkitob,
+				&row.kitobbet,
+				&row.gosraqam,
+				&row.sananomer,
+				&row.miqdor,
+				&row.xona,
+				&row.sf,
+				&row.sv,
+				&row.po,
+				&row.pj,
+				&row.pp,
+				&row.pzuo,
+				&row.pzuz,
+				&row.pzuzaxvat,
+				&row.pzupd,
+				&row.pzupp,
+				&row.npp,
+				&row.npk,
+				&row.spp,
+				&row.spk)
+			fmt.Println(row)
+			userinsert := r.FormValue("uname")
+			fmt.Println(userinsert)
+			quer1 := fmt.Sprintf(`select useru from users where useru = '%s';`, userinsert)
+			fmt.Println(quer1)
+			result1 := db.QueryRow(quer1)
+			qowquery := new(Qow)
+			result1.Scan(&qowquery.useri)
+			fmt.Println(row.mulk)
+			lastquer := fmt.Sprintf(`INSERT INTO import (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk, useri)
+		VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row.mulk, row.kod, row.mahalla, row.egalik, row.pasport, row.hujjat, row.regkitob, row.kitobbet, row.gosraqam, row.sananomer, row.miqdor, row.xona, row.sf, row.sv, row.po, row.pj, row.pp, row.pzuo, row.pzuz, row.pzuzaxvat, row.pzupd, row.pzupp, row.npp, row.npk, row.spp, row.spk, qowquery.useri)
 
+			_, err = db.Exec(lastquer)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			fmt.Print(row)
+		}
 		tem.Execute(w, nil)
 	}
+
 }
 func datab(w http.ResponseWriter, r *http.Request) {
 	tabledb, err := db.Prepare(`SELECT table_name
