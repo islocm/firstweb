@@ -73,46 +73,40 @@ func olmazor(w http.ResponseWriter, r *http.Request) {
 	// var name string
 	// row := db.QueryRow(`select datei from import order by datei desc limit 1;`)
 	// row.Scan(&name)
+	if r.FormValue("email") != "" {
+		forval := r.FormValue("email")
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, forval)
+		sorov := db.QueryRow(getuserval)
+		var name string
+		sorov.Scan(&name)
+		if name == r.FormValue("email") {
 
-	// timego := time.Now().Unix()
-
-	// timepar, err := time.Parse(time.RFC3339, name)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// gotime := timepar.Unix()
-	// fmt.Println(gotime)
-	// fmt.Println(timego)
-	username := "islocm"
-	password := "60nurilla"
-	// // fmt.Println(startTime)
-
-	// if timego+17400 < gotime {
-
-	// 	tem, err := template.ParseFiles("template/development.html")
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 		return
-	// 	}
-	// 	tem.Execute(w, nil)
-
-	// } else {
-	if r.FormValue("uname") == username && r.FormValue("psw") == password {
-		http.Redirect(w, r, "/spisok", 308)
-
+			sessionManager.Put(r.Context(), "message", name)
+			tem, err := template.ParseFiles("template/Success.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+		}
 	} else {
 		tem, err := template.ParseFiles("template/Olmazor.html")
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+
 		tem.Execute(w, nil)
 
 	}
 
-	// }
 }
 
 // Row asd
@@ -150,14 +144,25 @@ type Qow struct {
 	useri string
 }
 
+//Qow1 asd
+type Qow1 struct {
+	Useri string
+}
+
 func spisok(w http.ResponseWriter, r *http.Request) {
-	if r.FormValue("uname") == "islocm" {
+	msg := sessionManager.GetString(r.Context(), "message")
+	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+	sorov := db.QueryRow(getuserval)
+	var name string
+	sorov.Scan(&name)
+
+	if name == msg {
 		tem, err := template.ParseFiles("template/development.html")
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println(r.FormValue("kodi"))
+
 		if r.FormValue("kodi") != "" {
 			kodi := r.FormValue("kodi")
 			quer := fmt.Sprintf(`SELECT mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk
@@ -189,15 +194,15 @@ func spisok(w http.ResponseWriter, r *http.Request) {
 				&row.npk,
 				&row.spp,
 				&row.spk)
-			fmt.Println(row)
+
 			userinsert := r.FormValue("uname")
-			fmt.Println(userinsert)
+
 			quer1 := fmt.Sprintf(`select useru from users where useru = '%s';`, userinsert)
-			fmt.Println(quer1)
+
 			result1 := db.QueryRow(quer1)
 			qowquery := new(Qow)
 			result1.Scan(&qowquery.useri)
-			fmt.Println(row.mulk)
+
 			lastquer := fmt.Sprintf(`INSERT INTO import (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk, useri)
 		VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row.mulk, row.kod, row.mahalla, row.egalik, row.pasport, row.hujjat, row.regkitob, row.kitobbet, row.gosraqam, row.sananomer, row.miqdor, row.xona, row.sf, row.sv, row.po, row.pj, row.pp, row.pzuo, row.pzuz, row.pzuzaxvat, row.pzupd, row.pzupp, row.npp, row.npk, row.spp, row.spk, qowquery.useri)
 
@@ -209,6 +214,14 @@ func spisok(w http.ResponseWriter, r *http.Request) {
 
 			fmt.Print(row)
 		}
+		tem.Execute(w, nil)
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
 		tem.Execute(w, nil)
 	}
 

@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/alexedwards/scs"
 
 	_ "github.com/lib/pq"
 )
@@ -12,20 +15,25 @@ type Name struct {
 	LName []string
 }
 
+var sessionManager *scs.SessionManager
+
 func main() {
 	e := connection()
 	if e != nil {
 		fmt.Println(e)
 		return
 	}
+	sessionManager = scs.New()
+	sessionManager.Lifetime = 24 * time.Hour
 
-	http.HandleFunc("/", authBasic(index))
-	http.HandleFunc("/Olmazor", olmazor)
-	http.HandleFunc("/spisok", spisok)
-	http.HandleFunc("/database", datab)
-	http.HandleFunc("/excel", wrexcel)
-	http.HandleFunc("/execdb", hidedb)
-	http.HandleFunc("/otiochsin", otiochsin)
-	http.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
-	http.ListenAndServe(":3030", nil)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", authBasic(index))
+	mux.HandleFunc("/Olmazor", olmazor)
+	mux.HandleFunc("/spisok", spisok)
+	mux.HandleFunc("/database", datab)
+	mux.HandleFunc("/excel", wrexcel)
+	mux.HandleFunc("/execdb", hidedb)
+	mux.HandleFunc("/otiochsin", otiochsin)
+	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
+	http.ListenAndServe(":3030", sessionManager.LoadAndSave(mux))
 }
