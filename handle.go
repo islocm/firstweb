@@ -650,3 +650,103 @@ ORDER BY
 	}
 
 }
+
+// Import asd
+type Import struct {
+	Idi       string
+	Mulk      string
+	Kod       string
+	Mahalla   string
+	Egalik    string
+	Pasport   string
+	Hujjat    string
+	Regkitob  string
+	Kitobbet  string
+	Gosraqam  string
+	Sananomer string
+	Miqdor    string
+	Xona      string
+	Sf        string
+	Sv        string
+	Po        string
+	Pj        string
+	Pp        string
+	Pzuo      string
+	Pzuz      string
+	Pzuzaxvat string
+	Pzupd     string
+	Pzupp     string
+	Npp       string
+	Npk       string
+	Spp       string
+	Spk       string
+	Datei     string
+	Useri     string
+	Salom     []Nomida
+}
+
+func importni(w http.ResponseWriter, r *http.Request) {
+	temp, err := template.ParseFiles("template/import.html")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	getval := r.FormValue("getinfo")
+	symval := "%"
+
+	querylike := fmt.Sprintf(`SELECT *
+FROM
+	import
+	WHERE
+	Egalik LIKE '%s%s%s' OR Mulk LIKE '%s%s%s'
+ORDER BY 
+		Egalik; `, symval, getval, symval, symval, getval, symval)
+	if getval != "" {
+		Row := new(Nomida)
+
+		rows, err := db.Query(querylike)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for rows.Next() {
+			err = rows.Scan(&Row.Mulk, &Row.Kod, &Row.Mahalla, &Row.Egalik, &Row.Pasport, &Row.Hujjat, &Row.Regkitob, &Row.Kitobbet, &Row.Gosraqam, &Row.Sananomer, &Row.Miqdor, &Row.Xona, &Row.Sf, &Row.Sv, &Row.Po, &Row.Pj, &Row.Pp, &Row.Pzuo, &Row.Pzuz, &Row.Pzuzaxvat, &Row.Pzupd, &Row.Pzupp, &Row.Npp, &Row.Npk, &Row.Spp, &Row.Spk)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			Row.Salom = append(Row.Salom, Nomida{Mulk: Row.Mulk, Kod: Row.Kod, Mahalla: Row.Mahalla, Egalik: Row.Egalik, Pasport: Row.Pasport, Hujjat: Row.Hujjat, Regkitob: Row.Regkitob, Kitobbet: Row.Kitobbet, Gosraqam: Row.Gosraqam, Sananomer: Row.Sananomer, Miqdor: Row.Miqdor, Xona: Row.Xona, Sf: Row.Sf, Sv: Row.Sv, Po: Row.Po, Pj: Row.Pj, Pp: Row.Pp, Pzuo: Row.Pzuo, Pzuz: Row.Pzuz, Pzuzaxvat: Row.Pzuzaxvat, Pzupd: Row.Pzupd, Pzupp: Row.Pzupp, Npp: Row.Npp, Npk: Row.Npk, Spp: Row.Spp, Spk: Row.Spk})
+
+			// kochir.Mulk = append(kochir.Mulk, Row.Mulk)
+			// kochir.Kod = append(kochir.Kod, Row.Kod)
+			// kochir.Mahalla = append(kochir.Mahalla, Row.Mahalla)
+			// kochir.Egalik = append(kochir.Egalik, Row.Egalik)
+			// kochir.Pasport = append(kochir.Pasport, Row.Pasport)
+			// kochir.Hujjat = append(kochir.Hujjat, Row.Hujjat)
+			// kochir.Regkitob = append(kochir.Regkitob, Row.Regkitob)
+			// kochir.Kitobbet = append(kochir.Kitobbet, Row.Kitobbet)
+			// kochir.Gosraqam = append(kochir.Gosraqam, Row.Gosraqam)
+			// kochir.Sananomer = append(kochir.Sananomer, Row.Sananomer)
+			// kochir.Miqdor = append(kochir.Miqdor, Row.Miqdor)
+			// kochir.Xona = append(kochir.Xona, Row.Xona)
+			// kochir.Sf = append(kochir.Sf, Row.Sf)
+			// kochir.Sv = append(kochir.Sv, Row.Sv)
+			// kochir.Po = append(kochir.Po, Row.Po)
+			// kochir.Pj = append(kochir.Pj, Row.Pj)
+			// kochir.Pp = append(kochir.Pp, Row.Pp)
+			// kochir.Pzuo = append(kochir.Pzuo, Row.Pzuo)
+			// kochir.Pzuz = append(kochir.Pzuz, Row.Pzuz)
+			// kochir.Pzuzaxvat = append(kochir.Pzuzaxvat, Row.Pzuzaxvat)
+			// kochir.Pzupd = append(kochir.Pzupd, Row.Pzupd)
+			// kochir.Pzupp = append(kochir.Pzupp, Row.Pzupp)
+			// kochir.Npp = append(kochir.Npp, Row.Npp)
+			// kochir.Npk = append(kochir.Npk, Row.Npk)
+			// kochir.Spp = append(kochir.Spp, Row.Spp)
+			// kochir.Spk = append(kochir.Spk, Row.Spk)
+		}
+
+		temp.Execute(w, Row.Salom)
+	} else {
+		temp.Execute(w, nil)
+	}
+
+}

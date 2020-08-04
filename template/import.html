@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+        </style>
+</head>
+<body>
+  <form action="/otiochsin" method="POST">
+    <input type="text" name="getinfo">
+    <input type="submit" value="GO">
+  </form>
+        <table id="myTable">
+            <tr>
+                <th rowspan="2">Id</th>
+                <th rowspan="2">Недвижимость</th>
+                <th rowspan="2">Код</th>
+                <th rowspan="2">Махалля</th>
+                <th rowspan="2">Правообладатель</th>
+                <th rowspan="2">Паспорт</th>
+                <th rowspan="2">Сопроводительный документ</th>
+                <th rowspan="2">Рег. книга</th>
+                <th rowspan="2">Рег. книга стр.</th>
+                <th rowspan="2">Гос. номер</th>
+                <th rowspan="2">Дата гос. номера</th>
+                <th rowspan="2">Кол-во</th>
+                <th rowspan="2">Комнаты</th>
+                <th colspan="2">Стоимость</th>
+                <th colspan="3">Площадь</th>
+                <th colspan="5">Площадь земельного участка</th>
+                <th colspan="2">Нежилое помещение</th>
+                <th colspan="2">Самовольная постройка</th>
+                <tr>
+                    <th>Фактическая</th>
+                    <th>Восстановительная</th>
+                    <th>Общая</th>
+                    <th>Жилая</th>
+                    <th>Полезная</th>
+                    <th>Общая</th>
+                    <th>Законная</th>
+                    <th>Захват</th>
+                    <th>Под двором</th>
+                    <th>Под постройкой</th>
+                    <th>Площадь</th>
+                    <th>Комнаты</th>
+                    <th>Площадь</th>
+                    <th>Комнаты</th>
+                </tr>
+                <th rowspan="2">Date</th>
+                <th rowspan="2">User</th>
+            </tr>
+            {{range .}}
+              <tr>
+                <td>{{.Idi}}</td>
+                <td>{{.Mulk}}</td>
+                <td>{{.Kod}}</td>
+                <td>{{.Mahalla}}</td>
+                <td>{{.Egalik}}</td>
+                <td>{{.Pasport}}</td>
+                <td>{{.Hujjat}}</td>
+                <td>{{.Regkitob}}</td>
+                <td>{{.Kitobbet}}</td>
+                <td>{{.Gosraqam}}</td>
+                <td>{{.Sananomer}}</td>
+                <td>{{.Miqdor}}</td>
+                <td>{{.Xona}}</td>
+                <td>{{.Sf}}</td>
+                <td>{{.Sv}}</td>
+                <td>{{.Po}}</td>
+                <td>{{.Pj}}</td>
+                <td>{{.Pp}}</td>
+                <td>{{.Pzuo}}</td>
+                <td>{{.Pzuz}}</td>
+                <td>{{.Pzuzaxvat}}</td>
+                <td>{{.Pzupd}}</td>
+                <td>{{.Pzupp}}</td>
+                <td>{{.Npp}}</td>
+                <td>{{.Npk}}</td>
+                <td>{{.Spp}}</td>
+                <td>{{.Spk}}</td>
+                <td>{{.Datei}}</td>
+                <td>{{.Useri}}</td>
+                
+              </tr>
+            {{end}}
+        </table>
+    
+</body>
+</html>
