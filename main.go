@@ -36,5 +36,5 @@ func main() {
 	mux.HandleFunc("/otiochsin", otiochsin)
 	mux.HandleFunc("/import", importni)
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
-	http.ListenAndServe(":3030", sessionManager.LoadAndSave(mux))
+	http.ListenAndServe("192.168.8.34:3030", sessionManager.LoadAndSave(mux))
 }

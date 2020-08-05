@@ -15,7 +15,7 @@ func authBasic(handler handler) handler {
 			return
 		}
 
-		if username != "islocm" || password != "60nurilla" {
+		if username != "username" || password != "12345" {
 			http.Error(w, "Not authorized", 401)
 			return
 		}

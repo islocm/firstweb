@@ -82,6 +82,21 @@ body {
     border: 1px solid #ccc;  
   }
 }
+table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
 </style>
 </head>
 <body>
@@ -89,15 +104,64 @@ body {
         <a href="/">Home</a>
         <a href="/import" target="_blank">Olib kelingan</a>
         <a href="/otiochsin">Otiochsin</a>
+        
         <div class="login-container">
-          <form action="" method="POST">
+          <form action="/spisok" method="POST">
             <input type="text" placeholder="kod" name="kodi">
             <button type="submit">Save</button>
           </form>
         </div>
       </div>
       
-      
+      <form action="/spisok" method="POST">
+
+        <input type="text" placeholder="Tuman" name="tumans">
+        <input type="text" placeholder="Kod" name="kods">
+        <input type="text" placeholder="Oila IFO" name="kompensatsiyas">
+        <input type="text" placeholder="Jon" name="sostavs">
+        <input type="text" placeholder="Huquq" name="huquqs">
+        <input type="text" placeholder="Xona" name="xonas">
+        <input type="text" placeholder="Izoh" name="izoh">
+        <input type="submit" value="Save">
+
+      </form>
+
+      <table id="myTable">
+        <tr>
+            <th>Id</th>
+            <th>Tuman</th>
+            <th>Mulk</th>
+            <th>Kods</th>
+            <th>Kompensatsiya</th>
+            <th>Sostav</th>
+            <th>Huquq</th>
+            <th>Xona</th>
+            <th>Izoh</th>
+            <th>Times</th>
+            <th>User</th>
+
+            
+            
+        </tr>
+        {{range .}}
+          <tr>
+            <td>{{.Ids}}</td>
+            <td>{{.Tumans}}</td>
+            <td><a href="/spisok/abs">{{.Mulks}}</a></td>
+            <td><a href={{.Kods}}>{{.Kods}}</a></td>
+            <td>{{.Kompensatsiyas}}</td>
+            <td>{{.Sostavs}}</td>
+            <td>{{.Huquqs}}</td>
+            <td>{{.Xonas}}</td>
+            <td>{{.Izoh}}</td>
+            <td>{{.Times}}</td>
+            <td>{{.Users}}</td>
+            
+            
+          </tr>
+          
+        {{end}}
+    </table>
     
 
 

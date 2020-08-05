@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -109,8 +110,8 @@ func olmazor(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Row asd
-type Row struct {
+// Rowchange asd
+type Rowchange struct {
 	mulk      string
 	kod       string
 	mahalla   string
@@ -149,83 +150,155 @@ type Qow1 struct {
 	Useri string
 }
 
+// Selyami asd
+type Selyami struct {
+	Ids            string
+	Tumans         string
+	Mulks          string
+	Kods           string
+	Kompensatsiyas string
+	Sostavs        string
+	Huquqs         string
+	Xonas          string
+	Izoh           string
+	Times          string
+	Users          string
+	Salom          []Selyami
+}
+
+var rNum = regexp.MustCompile(`/d`)  // Has digit(s)
+var rAbc = regexp.MustCompile(`abs`) // Contains "abc"
 func spisok(w http.ResponseWriter, r *http.Request) {
 	msg := sessionManager.GetString(r.Context(), "message")
 	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
 	sorov := db.QueryRow(getuserval)
 	var name string
+	fmt.Println(r.URL.Path)
 	sorov.Scan(&name)
+	r.URL.Path = strings.ReplaceAll(r.URL.Path, "/spisok", "")
+	switch {
+	case rNum.MatchString(r.URL.Path):
+		digits(w, r)
+	case rAbc.MatchString(r.URL.Path):
+		abc(w, r)
+	default:
+		if name == msg {
 
-	if name == msg {
-		tem, err := template.ParseFiles("template/development.html")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		if r.FormValue("kodi") != "" {
-			kodi := r.FormValue("kodi")
-			quer := fmt.Sprintf(`SELECT mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk
-		FROM kadastr WHERE kod='%s';`, kodi)
-			fmt.Println(quer)
-			result := db.QueryRow(quer)
-			row := new(Row)
-			result.Scan(&row.mulk, &row.kod, &row.mahalla,
-				&row.egalik,
-				&row.pasport,
-				&row.hujjat,
-				&row.regkitob,
-				&row.kitobbet,
-				&row.gosraqam,
-				&row.sananomer,
-				&row.miqdor,
-				&row.xona,
-				&row.sf,
-				&row.sv,
-				&row.po,
-				&row.pj,
-				&row.pp,
-				&row.pzuo,
-				&row.pzuz,
-				&row.pzuzaxvat,
-				&row.pzupd,
-				&row.pzupp,
-				&row.npp,
-				&row.npk,
-				&row.spp,
-				&row.spk)
-
-			userinsert := r.FormValue("uname")
-
-			quer1 := fmt.Sprintf(`select useru from users where useru = '%s';`, userinsert)
-
-			result1 := db.QueryRow(quer1)
-			qowquery := new(Qow)
-			result1.Scan(&qowquery.useri)
-
-			lastquer := fmt.Sprintf(`INSERT INTO import (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk, useri)
-		VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row.mulk, row.kod, row.mahalla, row.egalik, row.pasport, row.hujjat, row.regkitob, row.kitobbet, row.gosraqam, row.sananomer, row.miqdor, row.xona, row.sf, row.sv, row.po, row.pj, row.pp, row.pzuo, row.pzuz, row.pzuzaxvat, row.pzupd, row.pzupp, row.npp, row.npk, row.spp, row.spk, qowquery.useri)
-
-			_, err = db.Exec(lastquer)
+			tem, err := template.ParseFiles("template/development.html")
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
 
-			fmt.Print(row)
-		}
-		tem.Execute(w, nil)
-	} else {
-		tem, err := template.ParseFiles("template/error.html")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+			Row := new(Selyami)
 
-		tem.Execute(w, nil)
+			rows, err := db.Query(`SELECT * FROM "Selyami";`)
+			if err != nil {
+				fmt.Println(err)
+			}
+			for rows.Next() {
+				err = rows.Scan(&Row.Ids, &Row.Tumans, &Row.Mulks, &Row.Kods, &Row.Kompensatsiyas, &Row.Sostavs, &Row.Huquqs, &Row.Xonas, &Row.Izoh, &Row.Times, &Row.Users)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				Row.Salom = append(Row.Salom, Selyami{Ids: Row.Ids, Tumans: Row.Tumans, Mulks: Row.Mulks, Kods: Row.Kods, Kompensatsiyas: Row.Kompensatsiyas, Sostavs: Row.Sostavs, Huquqs: Row.Huquqs, Xonas: Row.Xonas, Izoh: Row.Izoh, Times: Row.Times, Users: Row.Users})
+			}
+
+			if r.FormValue("kodi") != "" {
+				kodi := r.FormValue("kodi")
+				quer := fmt.Sprintf(`SELECT mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk
+				FROM kadastr WHERE kod='%s';`, kodi)
+				fmt.Println(quer)
+				result := db.QueryRow(quer)
+				row := new(Rowchange)
+				result.Scan(&row.mulk, &row.kod, &row.mahalla,
+					&row.egalik,
+					&row.pasport,
+					&row.hujjat,
+					&row.regkitob,
+					&row.kitobbet,
+					&row.gosraqam,
+					&row.sananomer,
+					&row.miqdor,
+					&row.xona,
+					&row.sf,
+					&row.sv,
+					&row.po,
+					&row.pj,
+					&row.pp,
+					&row.pzuo,
+					&row.pzuz,
+					&row.pzuzaxvat,
+					&row.pzupd,
+					&row.pzupp,
+					&row.npp,
+					&row.npk,
+					&row.spp,
+					&row.spk)
+				fmt.Println("hato")
+				fmt.Println(row.mulk)
+				repairnull := ""
+
+				lastquer := fmt.Sprintf(`INSERT INTO import (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk, useri)
+				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row.mulk, row.kod, row.mahalla, row.egalik, row.pasport, row.hujjat, row.regkitob, row.kitobbet, row.gosraqam, row.sananomer, row.miqdor, row.xona, row.sf, row.sv, row.po, row.pj, row.pp, row.pzuo, row.pzuz, row.pzuzaxvat, row.pzupd, row.pzupp, row.npp, row.npk, row.spp, row.spk, name)
+
+				lastquery := fmt.Sprintf(`insert into "Selyami" (kods, mulks, users, tumans, kompensatsiyas, sostavs, huquqs, xonas, izoh)
+				values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row.kod, row.mulk, name, repairnull, repairnull, repairnull, repairnull, repairnull, repairnull)
+				_, err = db.Exec(lastquer)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				_, err = db.Exec(lastquery)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				fmt.Println("hato1")
+
+			}
+			// If else
+			if r.FormValue("kods") != "" {
+				valforupdate := r.FormValue("tumans")
+				valforupdate1 := r.FormValue("kods")
+				valforupdate2 := r.FormValue("kompensatsiyas")
+				valforupdate3 := r.FormValue("sostavs")
+				valforupdate4 := r.FormValue("huquqs")
+				valforupdate5 := r.FormValue("xonas")
+				valforupdate6 := r.FormValue("izoh")
+				dbsorov := fmt.Sprintf(`UPDATE "Selyami"
+					SET tumans = '%s', kompensatsiyas = '%s', sostavs = '%s', huquqs = '%s', xonas = '%s', izoh = '%s', users = '%s'
+					WHERE kods = '%s';`, valforupdate, valforupdate2, valforupdate3, valforupdate4, valforupdate5, valforupdate6, valforupdate1, name)
+				_, err = db.Exec(dbsorov)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			}
+			tem.Execute(w, Row.Salom)
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+
+		}
 	}
 
 }
+
+func digits(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(r.URL.String()))
+
+}
+
+func abc(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Has abc"))
+}
+
 func datab(w http.ResponseWriter, r *http.Request) {
 	tabledb, err := db.Prepare(`SELECT table_name
 	FROM information_schema.tables
