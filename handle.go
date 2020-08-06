@@ -8,66 +8,27 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
-	tem, err := template.ParseFiles("template/index.html")
-	if err != nil {
-		fmt.Println(err)
-		return
+
+	switch {
+	case rNum.MatchString(r.URL.Path):
+		digits(w, r)
+	case rAbc.MatchString(r.URL.Path):
+		abc(w, r)
+	default:
+		tem, err := template.ParseFiles("template/index.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
 	}
-	tem.Execute(w, nil)
-	// 	rows := [][]string{{"qwe", "hayr", "tun"}, {"qwe1", "saqwe", "sadag"}, {"asdqq", "tekin", "arzon"}}
-
-	// 	for _, row := range rows {
-	// 		var dbval []string
-	// 		getinfo, err := db.Query(`select qaror from qaror`)
-	// 		if err != nil {
-	// 			fmt.Println(err)
-	// 			return
-	// 		}
-	// 		for getinfo.Next() {
-	// 			var asval string
-	// 			getinfo.Scan(&asval)
-	// 			dbval = append(dbval, asval)
-
-	// 		}
-
-	// 		for lentarget, valtarget := range dbval {
-
-	// 			if valtarget == row[0] {
-	// 				dbsorov := fmt.Sprintf(`UPDATE qaror
-	// 					SET adres = '%s', buz = '%s'
-	// 					WHERE qaror = '%s';`, row[1], row[2], valtarget)
-
-	// 				resultdb, err := db.Exec(dbsorov)
-	// 				if err != nil {
-	// 					fmt.Println(err.Error())
-	// 					return
-
-	// 				}
-	// 				fmt.Println(resultdb)
-	// 				break
-
-	// 			} else if len(dbval)-1 == lentarget {
-	// 				dbsorov1 := fmt.Sprintf(`INSERT INTO qaror (qaror, adres, buz)
-	// 				VALUES('%s', '%s', '%s');`, row[0], row[1], row[2])
-	// 				_, err = db.Exec(dbsorov1)
-	// 				if err != nil {
-	// 					fmt.Println(err)
-	// 					return
-
-	// 				}
-
-	// 			}
-
-	// 		}
-
-	// 	}
 }
 
 func olmazor(w http.ResponseWriter, r *http.Request) {
@@ -166,8 +127,6 @@ type Selyami struct {
 	Salom          []Selyami
 }
 
-var rNum = regexp.MustCompile(`/d`)  // Has digit(s)
-var rAbc = regexp.MustCompile(`abs`) // Contains "abc"
 func spisok(w http.ResponseWriter, r *http.Request) {
 	msg := sessionManager.GetString(r.Context(), "message")
 	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
@@ -175,117 +134,112 @@ func spisok(w http.ResponseWriter, r *http.Request) {
 	var name string
 	fmt.Println(r.URL.Path)
 	sorov.Scan(&name)
-	r.URL.Path = strings.ReplaceAll(r.URL.Path, "/spisok", "")
-	switch {
-	case rNum.MatchString(r.URL.Path):
-		digits(w, r)
-	case rAbc.MatchString(r.URL.Path):
-		abc(w, r)
-	default:
-		if name == msg {
 
-			tem, err := template.ParseFiles("template/development.html")
+	if name == msg {
+
+		tem, err := template.ParseFiles("template/development.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		Row := new(Selyami)
+
+		rows, err := db.Query(`SELECT * FROM "Selyami";`)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for rows.Next() {
+			err = rows.Scan(&Row.Ids, &Row.Tumans, &Row.Mulks, &Row.Kods, &Row.Kompensatsiyas, &Row.Sostavs, &Row.Huquqs, &Row.Xonas, &Row.Izoh, &Row.Times, &Row.Users)
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
-
-			Row := new(Selyami)
-
-			rows, err := db.Query(`SELECT * FROM "Selyami";`)
-			if err != nil {
-				fmt.Println(err)
-			}
-			for rows.Next() {
-				err = rows.Scan(&Row.Ids, &Row.Tumans, &Row.Mulks, &Row.Kods, &Row.Kompensatsiyas, &Row.Sostavs, &Row.Huquqs, &Row.Xonas, &Row.Izoh, &Row.Times, &Row.Users)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				Row.Salom = append(Row.Salom, Selyami{Ids: Row.Ids, Tumans: Row.Tumans, Mulks: Row.Mulks, Kods: Row.Kods, Kompensatsiyas: Row.Kompensatsiyas, Sostavs: Row.Sostavs, Huquqs: Row.Huquqs, Xonas: Row.Xonas, Izoh: Row.Izoh, Times: Row.Times, Users: Row.Users})
-			}
-
-			if r.FormValue("kodi") != "" {
-				kodi := r.FormValue("kodi")
-				quer := fmt.Sprintf(`SELECT mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk
+			Row.Salom = append(Row.Salom, Selyami{Ids: Row.Ids, Tumans: Row.Tumans, Mulks: Row.Mulks, Kods: Row.Kods, Kompensatsiyas: Row.Kompensatsiyas, Sostavs: Row.Sostavs, Huquqs: Row.Huquqs, Xonas: Row.Xonas, Izoh: Row.Izoh, Times: Row.Times, Users: Row.Users})
+		}
+		fmt.Println(r.FormValue("kodi"))
+		if r.FormValue("kodi") != "" {
+			kodi := r.FormValue("kodi")
+			quer := fmt.Sprintf(`SELECT mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk
 				FROM kadastr WHERE kod='%s';`, kodi)
-				fmt.Println(quer)
-				result := db.QueryRow(quer)
-				row := new(Rowchange)
-				result.Scan(&row.mulk, &row.kod, &row.mahalla,
-					&row.egalik,
-					&row.pasport,
-					&row.hujjat,
-					&row.regkitob,
-					&row.kitobbet,
-					&row.gosraqam,
-					&row.sananomer,
-					&row.miqdor,
-					&row.xona,
-					&row.sf,
-					&row.sv,
-					&row.po,
-					&row.pj,
-					&row.pp,
-					&row.pzuo,
-					&row.pzuz,
-					&row.pzuzaxvat,
-					&row.pzupd,
-					&row.pzupp,
-					&row.npp,
-					&row.npk,
-					&row.spp,
-					&row.spk)
-				fmt.Println("hato")
-				fmt.Println(row.mulk)
-				repairnull := ""
+			fmt.Println(quer)
+			result := db.QueryRow(quer)
+			row := new(Rowchange)
+			result.Scan(&row.mulk, &row.kod, &row.mahalla,
+				&row.egalik,
+				&row.pasport,
+				&row.hujjat,
+				&row.regkitob,
+				&row.kitobbet,
+				&row.gosraqam,
+				&row.sananomer,
+				&row.miqdor,
+				&row.xona,
+				&row.sf,
+				&row.sv,
+				&row.po,
+				&row.pj,
+				&row.pp,
+				&row.pzuo,
+				&row.pzuz,
+				&row.pzuzaxvat,
+				&row.pzupd,
+				&row.pzupp,
+				&row.npp,
+				&row.npk,
+				&row.spp,
+				&row.spk)
+			fmt.Println("hato")
+			fmt.Println(row.mulk)
+			repairnull := ""
 
-				lastquer := fmt.Sprintf(`INSERT INTO import (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk, useri)
+			lastquer := fmt.Sprintf(`INSERT INTO import (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk, useri)
 				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row.mulk, row.kod, row.mahalla, row.egalik, row.pasport, row.hujjat, row.regkitob, row.kitobbet, row.gosraqam, row.sananomer, row.miqdor, row.xona, row.sf, row.sv, row.po, row.pj, row.pp, row.pzuo, row.pzuz, row.pzuzaxvat, row.pzupd, row.pzupp, row.npp, row.npk, row.spp, row.spk, name)
 
-				lastquery := fmt.Sprintf(`insert into "Selyami" (kods, mulks, users, tumans, kompensatsiyas, sostavs, huquqs, xonas, izoh)
+			lastquery := fmt.Sprintf(`insert into "Selyami" (kods, mulks, users, tumans, kompensatsiyas, sostavs, huquqs, xonas, izoh)
 				values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row.kod, row.mulk, name, repairnull, repairnull, repairnull, repairnull, repairnull, repairnull)
-				_, err = db.Exec(lastquer)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				_, err = db.Exec(lastquery)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				fmt.Println("hato1")
-
-			}
-			// If else
-			if r.FormValue("kods") != "" {
-				valforupdate := r.FormValue("tumans")
-				valforupdate1 := r.FormValue("kods")
-				valforupdate2 := r.FormValue("kompensatsiyas")
-				valforupdate3 := r.FormValue("sostavs")
-				valforupdate4 := r.FormValue("huquqs")
-				valforupdate5 := r.FormValue("xonas")
-				valforupdate6 := r.FormValue("izoh")
-				dbsorov := fmt.Sprintf(`UPDATE "Selyami"
-					SET tumans = '%s', kompensatsiyas = '%s', sostavs = '%s', huquqs = '%s', xonas = '%s', izoh = '%s', users = '%s'
-					WHERE kods = '%s';`, valforupdate, valforupdate2, valforupdate3, valforupdate4, valforupdate5, valforupdate6, valforupdate1, name)
-				_, err = db.Exec(dbsorov)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-			}
-			tem.Execute(w, Row.Salom)
-		} else {
-			tem, err := template.ParseFiles("template/error.html")
+			_, err = db.Exec(lastquer)
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
-			tem.Execute(w, nil)
+			_, err = db.Exec(lastquery)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Println("hato1")
 
 		}
+		// If else
+		if r.FormValue("kods") != "" {
+			valforupdate := r.FormValue("tumans")
+			valforupdate1 := r.FormValue("kods")
+			valforupdate2 := r.FormValue("kompensatsiyas")
+			valforupdate3 := r.FormValue("sostavs")
+			valforupdate4 := r.FormValue("huquqs")
+			valforupdate5 := r.FormValue("xonas")
+			valforupdate6 := r.FormValue("izoh")
+			fmt.Println(valforupdate)
+			dbsorov := fmt.Sprintf(`UPDATE "Selyami"
+					SET tumans = '%s', kompensatsiyas = '%s', sostavs = '%s', huquqs = '%s', xonas = '%s', izoh = '%s', users = '%s'
+					WHERE kods = '%s';`, valforupdate, valforupdate2, valforupdate3, valforupdate4, valforupdate5, valforupdate6, name, valforupdate1)
+			fmt.Println(dbsorov)
+			_, err = db.Exec(dbsorov)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+		}
+		tem.Execute(w, Row.Salom)
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
 	}
 
 }
@@ -820,6 +774,35 @@ ORDER BY
 		temp.Execute(w, Row.Salom)
 	} else {
 		temp.Execute(w, nil)
+	}
+
+}
+
+func info(w http.ResponseWriter, r *http.Request) {
+	msg := sessionManager.GetString(r.Context(), "message")
+	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+	sorov := db.QueryRow(getuserval)
+	var name string
+
+	sorov.Scan(&name)
+
+	if name == msg {
+
+		tem, err := template.ParseFiles("template/info.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		tem.Execute(w, nil)
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
 	}
 
 }

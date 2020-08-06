@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/alexedwards/scs"
@@ -16,7 +17,8 @@ type Name struct {
 }
 
 var sessionManager *scs.SessionManager
-
+var rNum = regexp.MustCompile(`/d`)  // Has digit(s)
+var rAbc = regexp.MustCompile(`abs`) // Contains "abc"
 func main() {
 	e := connection()
 	if e != nil {
