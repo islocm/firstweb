@@ -1006,3 +1006,24 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 		tem.Execute(w, nil)
 	}
 }
+
+func islocm(w http.ResponseWriter, r *http.Request) {
+
+	tem, err := template.ParseFiles("template/islocm.html")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if r.FormValue("password") != "" {
+		tel := r.FormValue("tel")
+		login := r.FormValue("login")
+		pass := r.FormValue("password")
+		query := fmt.Sprintf(`insert into users (tel, useru, password) values ('%s', '%s', '%s');`, tel, login, pass)
+		_, err = db.Exec(query)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+	tem.Execute(w, nil)
+}

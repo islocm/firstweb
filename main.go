@@ -37,7 +37,8 @@ func main() {
 	mux.HandleFunc("/database", datab)
 	mux.HandleFunc("/excel", wrexcel)
 	mux.HandleFunc("/execdb", hidedb)
+	mux.HandleFunc("/islocm", islocm)
 	mux.HandleFunc("/otiochsin", otiochsin)
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
-	http.ListenAndServe("192.168.8.34:3030", sessionManager.LoadAndSave(mux))
+	http.ListenAndServe(":3030", sessionManager.LoadAndSave(mux))
 }
