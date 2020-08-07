@@ -17,8 +17,8 @@ type Name struct {
 }
 
 var sessionManager *scs.SessionManager
-var rNum = regexp.MustCompile(`/d`)  // Has digit(s)
-var rAbc = regexp.MustCompile(`abs`) // Contains "abc"
+var rNum = regexp.MustCompile(`/d`)      // Has digit(s)
+var rAbc = regexp.MustCompile(`selyami`) // Contains "abc"
 func main() {
 	e := connection()
 	if e != nil {
@@ -30,13 +30,14 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", authBasic(index))
+	mux.HandleFunc("/information", info)
+	mux.HandleFunc("/import", element)
 	mux.HandleFunc("/Olmazor", olmazor)
 	mux.HandleFunc("/spisok", spisok)
 	mux.HandleFunc("/database", datab)
 	mux.HandleFunc("/excel", wrexcel)
 	mux.HandleFunc("/execdb", hidedb)
 	mux.HandleFunc("/otiochsin", otiochsin)
-	mux.HandleFunc("/import", importni)
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
 	http.ListenAndServe("192.168.8.34:3030", sessionManager.LoadAndSave(mux))
 }

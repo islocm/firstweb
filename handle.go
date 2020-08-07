@@ -19,7 +19,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	case rNum.MatchString(r.URL.Path):
 		digits(w, r)
 	case rAbc.MatchString(r.URL.Path):
-		abc(w, r)
+		selyamilink(w, r)
 	default:
 		tem, err := template.ParseFiles("template/index.html")
 		if err != nil {
@@ -680,103 +680,88 @@ ORDER BY
 
 // Import asd
 type Import struct {
-	Idi       string
-	Mulk      string
-	Kod       string
-	Mahalla   string
-	Egalik    string
-	Pasport   string
-	Hujjat    string
-	Regkitob  string
-	Kitobbet  string
-	Gosraqam  string
-	Sananomer string
-	Miqdor    string
-	Xona      string
-	Sf        string
-	Sv        string
-	Po        string
-	Pj        string
-	Pp        string
-	Pzuo      string
-	Pzuz      string
-	Pzuzaxvat string
-	Pzupd     string
-	Pzupp     string
-	Npp       string
-	Npk       string
-	Spp       string
-	Spk       string
-	Datei     string
-	Useri     string
-	Salom     []Nomida
+	ID              string
+	Qaror           string
+	Tuman           string
+	Mahalla         string
+	Kod             string
+	Nedvijimost     string
+	Pravoobladatel  string
+	Soprovoditelniy string
+	Pzuo            string
+	Po              string
+	Pj              string
+	Xona            string
+	Datei           string
+	Useri           string
+	Salom           []Import
 }
 
-func importni(w http.ResponseWriter, r *http.Request) {
-	temp, err := template.ParseFiles("template/import.html")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	getval := r.FormValue("getinfo")
-	symval := "%"
+// func importni(w http.ResponseWriter, r *http.Request) {
+// 	temp, err := template.ParseFiles("template/import.html")
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	getval := r.FormValue("getinfo")
+// 	symval := "%"
 
-	querylike := fmt.Sprintf(`SELECT *
-FROM
-	import
-	WHERE
-	Egalik LIKE '%s%s%s' OR Mulk LIKE '%s%s%s'
-ORDER BY 
-		Egalik; `, symval, getval, symval, symval, getval, symval)
-	if getval != "" {
-		Row := new(Nomida)
+// 	querylike := fmt.Sprintf(`SELECT *
+// FROM
+// 	import
+// 	WHERE
+// 	Egalik LIKE '%s%s%s' OR Mulk LIKE '%s%s%s'
+// ORDER BY
+// 		Egalik; `, symval, getval, symval, symval, getval, symval)
+// 	if getval != "" {
+// 		Row := new(Nomida)
 
-		rows, err := db.Query(querylike)
-		if err != nil {
-			fmt.Println(err)
-		}
-		for rows.Next() {
-			err = rows.Scan(&Row.Mulk, &Row.Kod, &Row.Mahalla, &Row.Egalik, &Row.Pasport, &Row.Hujjat, &Row.Regkitob, &Row.Kitobbet, &Row.Gosraqam, &Row.Sananomer, &Row.Miqdor, &Row.Xona, &Row.Sf, &Row.Sv, &Row.Po, &Row.Pj, &Row.Pp, &Row.Pzuo, &Row.Pzuz, &Row.Pzuzaxvat, &Row.Pzupd, &Row.Pzupp, &Row.Npp, &Row.Npk, &Row.Spp, &Row.Spk)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			Row.Salom = append(Row.Salom, Nomida{Mulk: Row.Mulk, Kod: Row.Kod, Mahalla: Row.Mahalla, Egalik: Row.Egalik, Pasport: Row.Pasport, Hujjat: Row.Hujjat, Regkitob: Row.Regkitob, Kitobbet: Row.Kitobbet, Gosraqam: Row.Gosraqam, Sananomer: Row.Sananomer, Miqdor: Row.Miqdor, Xona: Row.Xona, Sf: Row.Sf, Sv: Row.Sv, Po: Row.Po, Pj: Row.Pj, Pp: Row.Pp, Pzuo: Row.Pzuo, Pzuz: Row.Pzuz, Pzuzaxvat: Row.Pzuzaxvat, Pzupd: Row.Pzupd, Pzupp: Row.Pzupp, Npp: Row.Npp, Npk: Row.Npk, Spp: Row.Spp, Spk: Row.Spk})
+// 		rows, err := db.Query(querylike)
+// 		if err != nil {
+// 			fmt.Println(err)
+// 		}
+// 		for rows.Next() {
+// 			err = rows.Scan(&Row.Mulk, &Row.Kod, &Row.Mahalla, &Row.Egalik, &Row.Pasport, &Row.Hujjat, &Row.Regkitob, &Row.Kitobbet, &Row.Gosraqam, &Row.Sananomer, &Row.Miqdor, &Row.Xona, &Row.Sf, &Row.Sv, &Row.Po, &Row.Pj, &Row.Pp, &Row.Pzuo, &Row.Pzuz, &Row.Pzuzaxvat, &Row.Pzupd, &Row.Pzupp, &Row.Npp, &Row.Npk, &Row.Spp, &Row.Spk)
+// 			if err != nil {
+// 				fmt.Println(err)
+// 				return
+// 			}
+// 			Row.Salom = append(Row.Salom, Nomida{Mulk: Row.Mulk, Kod: Row.Kod, Mahalla: Row.Mahalla, Egalik: Row.Egalik, Pasport: Row.Pasport, Hujjat: Row.Hujjat, Regkitob: Row.Regkitob, Kitobbet: Row.Kitobbet, Gosraqam: Row.Gosraqam, Sananomer: Row.Sananomer, Miqdor: Row.Miqdor, Xona: Row.Xona, Sf: Row.Sf, Sv: Row.Sv, Po: Row.Po, Pj: Row.Pj, Pp: Row.Pp, Pzuo: Row.Pzuo, Pzuz: Row.Pzuz, Pzuzaxvat: Row.Pzuzaxvat, Pzupd: Row.Pzupd, Pzupp: Row.Pzupp, Npp: Row.Npp, Npk: Row.Npk, Spp: Row.Spp, Spk: Row.Spk})
 
-			// kochir.Mulk = append(kochir.Mulk, Row.Mulk)
-			// kochir.Kod = append(kochir.Kod, Row.Kod)
-			// kochir.Mahalla = append(kochir.Mahalla, Row.Mahalla)
-			// kochir.Egalik = append(kochir.Egalik, Row.Egalik)
-			// kochir.Pasport = append(kochir.Pasport, Row.Pasport)
-			// kochir.Hujjat = append(kochir.Hujjat, Row.Hujjat)
-			// kochir.Regkitob = append(kochir.Regkitob, Row.Regkitob)
-			// kochir.Kitobbet = append(kochir.Kitobbet, Row.Kitobbet)
-			// kochir.Gosraqam = append(kochir.Gosraqam, Row.Gosraqam)
-			// kochir.Sananomer = append(kochir.Sananomer, Row.Sananomer)
-			// kochir.Miqdor = append(kochir.Miqdor, Row.Miqdor)
-			// kochir.Xona = append(kochir.Xona, Row.Xona)
-			// kochir.Sf = append(kochir.Sf, Row.Sf)
-			// kochir.Sv = append(kochir.Sv, Row.Sv)
-			// kochir.Po = append(kochir.Po, Row.Po)
-			// kochir.Pj = append(kochir.Pj, Row.Pj)
-			// kochir.Pp = append(kochir.Pp, Row.Pp)
-			// kochir.Pzuo = append(kochir.Pzuo, Row.Pzuo)
-			// kochir.Pzuz = append(kochir.Pzuz, Row.Pzuz)
-			// kochir.Pzuzaxvat = append(kochir.Pzuzaxvat, Row.Pzuzaxvat)
-			// kochir.Pzupd = append(kochir.Pzupd, Row.Pzupd)
-			// kochir.Pzupp = append(kochir.Pzupp, Row.Pzupp)
-			// kochir.Npp = append(kochir.Npp, Row.Npp)
-			// kochir.Npk = append(kochir.Npk, Row.Npk)
-			// kochir.Spp = append(kochir.Spp, Row.Spp)
-			// kochir.Spk = append(kochir.Spk, Row.Spk)
-		}
+// 			// kochir.Mulk = append(kochir.Mulk, Row.Mulk)
+// 			// kochir.Kod = append(kochir.Kod, Row.Kod)
+// 			// kochir.Mahalla = append(kochir.Mahalla, Row.Mahalla)
+// 			// kochir.Egalik = append(kochir.Egalik, Row.Egalik)
+// 			// kochir.Pasport = append(kochir.Pasport, Row.Pasport)
+// 			// kochir.Hujjat = append(kochir.Hujjat, Row.Hujjat)
+// 			// kochir.Regkitob = append(kochir.Regkitob, Row.Regkitob)
+// 			// kochir.Kitobbet = append(kochir.Kitobbet, Row.Kitobbet)
+// 			// kochir.Gosraqam = append(kochir.Gosraqam, Row.Gosraqam)
+// 			// kochir.Sananomer = append(kochir.Sananomer, Row.Sananomer)
+// 			// kochir.Miqdor = append(kochir.Miqdor, Row.Miqdor)
+// 			// kochir.Xona = append(kochir.Xona, Row.Xona)
+// 			// kochir.Sf = append(kochir.Sf, Row.Sf)
+// 			// kochir.Sv = append(kochir.Sv, Row.Sv)
+// 			// kochir.Po = append(kochir.Po, Row.Po)
+// 			// kochir.Pj = append(kochir.Pj, Row.Pj)
+// 			// kochir.Pp = append(kochir.Pp, Row.Pp)
+// 			// kochir.Pzuo = append(kochir.Pzuo, Row.Pzuo)
+// 			// kochir.Pzuz = append(kochir.Pzuz, Row.Pzuz)
+// 			// kochir.Pzuzaxvat = append(kochir.Pzuzaxvat, Row.Pzuzaxvat)
+// 			// kochir.Pzupd = append(kochir.Pzupd, Row.Pzupd)
+// 			// kochir.Pzupp = append(kochir.Pzupp, Row.Pzupp)
+// 			// kochir.Npp = append(kochir.Npp, Row.Npp)
+// 			// kochir.Npk = append(kochir.Npk, Row.Npk)
+// 			// kochir.Spp = append(kochir.Spp, Row.Spp)
+// 			// kochir.Spk = append(kochir.Spk, Row.Spk)
+// 		}
 
-		temp.Execute(w, Row.Salom)
-	} else {
-		temp.Execute(w, nil)
-	}
+// 		temp.Execute(w, Row.Salom)
+// 	} else {
+// 		temp.Execute(w, nil)
+// 	}
 
-}
+// }
 
 func info(w http.ResponseWriter, r *http.Request) {
 	msg := sessionManager.GetString(r.Context(), "message")
@@ -786,9 +771,226 @@ func info(w http.ResponseWriter, r *http.Request) {
 
 	sorov.Scan(&name)
 
-	if name == msg {
+	if name == msg && msg != "" {
 
 		tem, err := template.ParseFiles("template/info.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		getval := r.FormValue("getinfo")
+		symval := "%"
+
+		querylike := fmt.Sprintf(`SELECT *
+		FROM
+		import
+		WHERE
+		kod LIKE '%s%s%s' OR nedvijimost LIKE '%s%s%s'
+		ORDER BY 
+		id; `, symval, getval, symval, symval, getval, symval)
+		if getval != "" {
+			Row := new(Import)
+
+			rows, err := db.Query(querylike)
+			if err != nil {
+				fmt.Println(err)
+			}
+			for rows.Next() {
+				err = rows.Scan(&Row.ID, &Row.Qaror, &Row.Tuman, &Row.Mahalla, &Row.Kod, &Row.Nedvijimost, &Row.Pravoobladatel, &Row.Soprovoditelniy, &Row.Pzuo, &Row.Po, &Row.Pj, &Row.Xona, &Row.Datei, &Row.Useri)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				Row.Salom = append(Row.Salom, Import{ID: Row.ID, Qaror: Row.Qaror, Tuman: Row.Tuman, Mahalla: Row.Mahalla, Kod: Row.Kod, Nedvijimost: Row.Nedvijimost, Pravoobladatel: Row.Pravoobladatel, Soprovoditelniy: Row.Soprovoditelniy, Pzuo: Row.Pzuo, Po: Row.Po, Pj: Row.Pj, Xona: Row.Xona, Datei: Row.Datei, Useri: Row.Useri})
+
+				// kochir.Mulk = append(kochir.Mulk, Row.Mulk)
+				// kochir.Kod = append(kochir.Kod, Row.Kod)
+				// kochir.Mahalla = append(kochir.Mahalla, Row.Mahalla)
+				// kochir.Egalik = append(kochir.Egalik, Row.Egalik)
+				// kochir.Pasport = append(kochir.Pasport, Row.Pasport)
+				// kochir.Hujjat = append(kochir.Hujjat, Row.Hujjat)
+				// kochir.Regkitob = append(kochir.Regkitob, Row.Regkitob)
+				// kochir.Kitobbet = append(kochir.Kitobbet, Row.Kitobbet)
+				// kochir.Gosraqam = append(kochir.Gosraqam, Row.Gosraqam)
+				// kochir.Sananomer = append(kochir.Sananomer, Row.Sananomer)
+				// kochir.Miqdor = append(kochir.Miqdor, Row.Miqdor)
+				// kochir.Xona = append(kochir.Xona, Row.Xona)
+				// kochir.Sf = append(kochir.Sf, Row.Sf)
+				// kochir.Sv = append(kochir.Sv, Row.Sv)
+				// kochir.Po = append(kochir.Po, Row.Po)
+				// kochir.Pj = append(kochir.Pj, Row.Pj)
+				// kochir.Pp = append(kochir.Pp, Row.Pp)
+				// kochir.Pzuo = append(kochir.Pzuo, Row.Pzuo)
+				// kochir.Pzuz = append(kochir.Pzuz, Row.Pzuz)
+				// kochir.Pzuzaxvat = append(kochir.Pzuzaxvat, Row.Pzuzaxvat)
+				// kochir.Pzupd = append(kochir.Pzupd, Row.Pzupd)
+				// kochir.Pzupp = append(kochir.Pzupp, Row.Pzupp)
+				// kochir.Npp = append(kochir.Npp, Row.Npp)
+				// kochir.Npk = append(kochir.Npk, Row.Npk)
+				// kochir.Spp = append(kochir.Spp, Row.Spp)
+				// kochir.Spk = append(kochir.Spk, Row.Spk)
+			}
+
+			tem.Execute(w, Row.Salom)
+		} else {
+			tem.Execute(w, nil)
+		}
+
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
+	}
+
+}
+
+func element(w http.ResponseWriter, r *http.Request) {
+	msg := sessionManager.GetString(r.Context(), "message")
+	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+	sorov := db.QueryRow(getuserval)
+	var name string
+
+	sorov.Scan(&name)
+
+	if name == msg && msg != "" {
+		if r.Method == "GET" {
+			tem, err := template.ParseFiles("template/element.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			tem.Execute(w, nil)
+		} else {
+
+			body := &bytes.Buffer{}
+			writer := multipart.NewWriter(body)
+
+			r.Header.Add("Content-Type", writer.FormDataContentType())
+			r.ParseMultipartForm(32 << 20)
+			file, header, err := r.FormFile("exwork")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			f, err := os.OpenFile("./"+header.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			io.Copy(f, file)
+
+			exfile, err := excelize.OpenFile(header.Filename)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			getsheet := exfile.GetSheetList()
+
+			rows, err := exfile.GetRows(getsheet[0])
+			fmt.Println(len(rows))
+
+			for _, row := range rows {
+				var dbval []string
+				getinfo, err := db.Query(`select kod from import`)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				for getinfo.Next() {
+					var asval string
+					getinfo.Scan(&asval)
+					dbval = append(dbval, asval)
+
+				}
+				fmt.Println("hato")
+				if dbval != nil {
+					for lentarget, valtarget := range dbval {
+
+						if valtarget == row[3] {
+							row[5] = strings.ReplaceAll(row[5], "'", "")
+							row[6] = strings.ReplaceAll(row[6], "'", "")
+
+							dbsorov := fmt.Sprintf(`UPDATE import
+					SET qaror = '%s', tuman = '%s', mahalla= '%s', nedvijimost = '%s', pravoobladatel = '%s',
+					soprovoditelniy = '%s', pzuo = '%s', po = '%s', pj = '%s', xona = '%s', useri = '%s'
+					WHERE kod = '%s';`, row[0], row[1], row[2], row[4], row[5], row[6], row[7], row[8], row[9], row[10], name, valtarget)
+
+							_, err = db.Exec(dbsorov)
+							if err != nil {
+								fmt.Println(err.Error())
+								return
+
+							}
+
+							break
+
+						} else if len(dbval)-1 == lentarget {
+							row[5] = strings.ReplaceAll(row[5], "'", "")
+							row[6] = strings.ReplaceAll(row[6], "'", "")
+
+							dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
+							VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], name)
+
+							_, err = db.Exec(dbsorov1)
+							if err != nil {
+								fmt.Println(err)
+								return
+
+							}
+
+						}
+
+					}
+				} else {
+					dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
+					VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], name)
+					_, err = db.Exec(dbsorov1)
+					if err != nil {
+						fmt.Println(err)
+						return
+
+					}
+
+				}
+
+			}
+			file.Close()
+			f.Close()
+			err = os.Remove(header.Filename)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+		}
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		tem.Execute(w, nil)
+	}
+}
+
+func selyamilink(w http.ResponseWriter, r *http.Request) {
+	msg := sessionManager.GetString(r.Context(), "message")
+	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+	sorov := db.QueryRow(getuserval)
+	var name string
+
+	sorov.Scan(&name)
+
+	if name == msg && msg != "" {
+		tem, err := template.ParseFiles("template/selyami.html")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -802,7 +1004,5 @@ func info(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		tem.Execute(w, nil)
-
 	}
-
 }

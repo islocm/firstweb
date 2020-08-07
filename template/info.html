@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    
 </head>
 <body>
+    <form action="/information" method="POST">
+        <input type="text" name="getinfo">
+        <input type="submit" value="GO">
+      </form>
     <table>
         <tr>
             <th>№</th>
@@ -23,6 +28,25 @@
             <th>Сана</th>
             <th>User</th>
         </tr>
+        {{range .}}
+        <tr>
+            <td>{{.ID}}</td>
+            <td>{{.Qaror}}</td>
+            <td>{{.Tuman}}</td>
+            <td>{{.Mahalla}}</td>
+            <td>{{.Kod}}</td>
+            <td>{{.Nedvijimost}}</td>
+            <td>{{.Pravoobladatel}}</td>
+            <td>{{.Soprovoditelniy}}</td>
+            <td>{{.Pzuo}}</td>
+            <td>{{.Po}}</td>
+            <td>{{.Pj}}</td>
+            <td>{{.Xona}}</td>
+            <td>{{.Datei}}</td>
+            <td>{{.Useri}}</td>
+           
+        </tr>
+        {{end}}
     </table>
 </body>
 </html>
