@@ -996,6 +996,17 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		births := r.FormValue("births")
+		relations := r.FormValue("relations")
+		joins := r.FormValue("joins")
+		manzils := r.FormValue("manzils")
+		raqams := r.FormValue("raqams")
+		vaqts := r.FormValue("vaqts")
+		yashashs := r.FormValue("yashashs")
+		foydas := r.FormValue("foydas")
+		hujjats := r.FormValue("hujjats")
+		izoh := r.FormValue("izoh")
+
 		tem.Execute(w, nil)
 	} else {
 		tem, err := template.ParseFiles("template/error.html")
