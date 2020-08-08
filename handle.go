@@ -857,7 +857,7 @@ func element(w http.ResponseWriter, r *http.Request) {
 	sorov.Scan(&name)
 
 	if name == msg && msg != "" {
-		if r.Method == "GET" {
+		if r.FormValue("exwork") == "" {
 			tem, err := template.ParseFiles("template/element.html")
 			if err != nil {
 				fmt.Println(err)
@@ -909,7 +909,7 @@ func element(w http.ResponseWriter, r *http.Request) {
 					dbval = append(dbval, asval)
 
 				}
-				fmt.Println("hato")
+
 				if dbval != nil {
 					for lentarget, valtarget := range dbval {
 
@@ -996,16 +996,44 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		births := r.FormValue("births")
-		relations := r.FormValue("relations")
-		joins := r.FormValue("joins")
-		manzils := r.FormValue("manzils")
-		raqams := r.FormValue("raqams")
-		vaqts := r.FormValue("vaqts")
-		yashashs := r.FormValue("yashashs")
-		foydas := r.FormValue("foydas")
-		hujjats := r.FormValue("hujjats")
-		izoh := r.FormValue("izoh")
+		urlcode := r.URL.Path
+		fmt.Println(urlcode)
+		if r.FormValue("jons") != "" {
+			urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+			fios := r.FormValue("fios")
+			births := r.FormValue("births")
+			relations := r.FormValue("relations")
+			jons := r.FormValue("jons")
+			manzils := r.FormValue("manzils")
+			raqams := r.FormValue("raqams")
+			vaqts := r.FormValue("vaqts")
+			yashashs := r.FormValue("yashashs")
+			foydas := r.FormValue("foydas")
+			hujjats := r.FormValue("hujjats")
+			izoh := r.FormValue("izoh")
+
+			selyamiquery := fmt.Sprintf(`insert into selyami (fios, kods, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, users)
+		values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, fios, urlcode, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, name)
+			_, err = db.Exec(selyamiquery)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			var num int
+
+			idselyami := db.QueryRow(`select ids from selyami order by ids desc;`)
+			idselyami.Scan(&num)
+
+			selyamilinkquery := fmt.Sprintf(`insert into tarkib (fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, usert, idselyamit)
+		values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d');`, fios, urlcode, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, name, num)
+
+			_, err = db.Exec(selyamilinkquery)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+		}
 
 		tem.Execute(w, nil)
 	} else {

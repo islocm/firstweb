@@ -4,12 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .open-button {
+  background-color: #555;
+  color: white;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 900px;
+  right: 28px;
+  width: 230px;
+}
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+a:link, a:visited {
+  color: white;
+  padding: 24px 35px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  
+  width: 150px;
+}
+    </style>
 </head>
 <body>
     <form action="import" enctype="multipart/form-data" method="POST">
     <input type="file" name="exwork">
     <input type="submit" value="Upload">
     </form>
-   
+   <button class="open-button"><a href="/information">Qaytish</a></button>
 </body>
 </html>

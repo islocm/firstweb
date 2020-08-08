@@ -40,5 +40,5 @@ func main() {
 	mux.HandleFunc("/islocm", islocm)
 	mux.HandleFunc("/otiochsin", otiochsin)
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
-	http.ListenAndServe(":3030", sessionManager.LoadAndSave(mux))
+	http.ListenAndServe(":8000", sessionManager.LoadAndSave(mux))
 }
