@@ -107,7 +107,43 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
   </form>
 </div>
-
+<table>
+  <tr>
+    <th>Т/р</th>
+    <th>Ф.И.О</th>
+    <th>Туғилган йили</th>
+    <th>Қариндошлик алоқаси</th>
+    <th>Жон боши</th>
+    <th>Бузилишга тушган манзил</th>
+    <th>Уй рақами</th>
+    <th>Рўйхатга қўйилган вақти</th>
+    <th>Яшаш майдони</th>
+    <th>Фойдаланиш майдони</th>
+    <th>Уй жойга тегишли хужжатлар</th>
+    <th>Изох</th>
+    <th>Вақти</th>
+    <th>Фойдаланувчи</th>
+  </tr>
+  {{range .}}
+  <tr>
+    <td>{{.Ids}}</td>
+    <td>{{.Fios}}</td>
+    <td>{{.Births}}</td>
+    <td>{{.Relations}}</td>
+    <td>{{.Jons}}</td>
+    <td>{{.Manzils}}</td>
+    <td>{{.Raqams}}</td>
+    <td>{{.Vaqts}}</td>
+    <td>{{.Yashashs}}</td>
+    <td>{{.Foydas}}</td>
+    <td>{{.Hujjats}}</td>
+    <td>{{.Izoh}}</td>
+    <td>{{.Times}}</td>
+    <td>{{.Users}}</td>
+   
+  </tr>
+  {{end}}
+</table>
 <script>
 function openForm() {
   document.getElementById("myForm").style.display = "block";

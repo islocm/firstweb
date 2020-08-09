@@ -18,8 +18,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case rNum.MatchString(r.URL.Path):
 		digits(w, r)
+	case rTarkib.MatchString(r.URL.Path):
+		tarkiblink(w, r)
 	case rAbc.MatchString(r.URL.Path):
 		selyamilink(w, r)
+
 	default:
 		tem, err := template.ParseFiles("template/index.html")
 		if err != nil {
@@ -860,7 +863,7 @@ func info(w http.ResponseWriter, r *http.Request) {
 
 			tem.Execute(w, Row.Salom)
 		} else {
-			querylike := fmt.Sprintf(`select * from import limit 20; `)
+			querylike := fmt.Sprintf(`select * from import order by id desc limit 20 ; `)
 
 			Row := new(Import)
 
@@ -1025,6 +1028,26 @@ func element(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Selyamigo qwe
+type Selyamigo struct {
+	Ids       string
+	Fios      string
+	Kods      string
+	Births    string
+	Relations string
+	Jons      string
+	Manzils   string
+	Raqams    string
+	Vaqts     string
+	Yashashs  string
+	Foydas    string
+	Hujjats   string
+	Izoh      string
+	Times     string
+	Users     string
+	Salom     []Selyamigo
+}
+
 func selyamilink(w http.ResponseWriter, r *http.Request) {
 	msg := sessionManager.GetString(r.Context(), "message")
 	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
@@ -1041,9 +1064,12 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 		}
 
 		urlcode := r.URL.Path
-
-		if r.FormValue("jons") != "" {
-			urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+		urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+		var checkkod string
+		kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, urlcode)
+		kodval := db.QueryRow(kodlist)
+		kodval.Scan(&checkkod)
+		if r.FormValue("jons") != "" && urlcode == checkkod {
 
 			fios := r.FormValue("fios")
 			births := r.FormValue("births")
@@ -1058,7 +1084,7 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 			izoh := r.FormValue("izoh")
 
 			selyamiquery := fmt.Sprintf(`insert into selyami (fios, kods, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, users)
-		values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, fios, urlcode, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, name)
+			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, fios, urlcode, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, name)
 			_, err = db.Exec(selyamiquery)
 			if err != nil {
 				fmt.Println(err)
@@ -1071,7 +1097,7 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 			idselyami.Scan(&num)
 
 			selyamilinkquery := fmt.Sprintf(`insert into tarkib (fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, usert, idselyamit)
-		values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d');`, fios, urlcode, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, name, num)
+			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d');`, fios, urlcode, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, name, num)
 
 			_, err = db.Exec(selyamilinkquery)
 			if err != nil {
@@ -1080,7 +1106,25 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		tem.Execute(w, nil)
+		querylike := fmt.Sprintf(`select * from selyami where kods = '%s'; `, urlcode)
+
+		Row := new(Selyamigo)
+
+		rows, err := db.Query(querylike)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for rows.Next() {
+			err = rows.Scan(&Row.Ids, &Row.Fios, &Row.Kods, &Row.Births, &Row.Relations, &Row.Jons, &Row.Manzils, &Row.Raqams, &Row.Vaqts, &Row.Yashashs, &Row.Foydas, &Row.Hujjats, &Row.Izoh, &Row.Times, &Row.Users)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			Row.Salom = append(Row.Salom, Selyamigo{Ids: Row.Ids, Fios: Row.Fios, Kods: Row.Kods, Births: Row.Births, Relations: Row.Relations, Jons: Row.Jons, Manzils: Row.Manzils, Raqams: Row.Raqams, Vaqts: Row.Vaqts, Yashashs: Row.Yashashs, Foydas: Row.Foydas, Hujjats: Row.Hujjats, Izoh: Row.Izoh, Times: Row.Times, Users: Row.Users})
+
+		}
+		tem.Execute(w, Row.Salom)
+
 	} else {
 		tem, err := template.ParseFiles("template/error.html")
 		if err != nil {
@@ -1110,4 +1154,134 @@ func islocm(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	tem.Execute(w, nil)
+}
+
+//Tarkib aasd
+type Tarkib struct {
+	Idt        string
+	Fiot       string
+	Kodt       string
+	Birtht     string
+	Relationt  string
+	Jont       string
+	Manzilt    string
+	Raqamt     string
+	Vaqtt      string
+	Yashasht   string
+	Foydat     string
+	Hujjatt    string
+	Izoht      string
+	Timet      string
+	Usert      string
+	Idselyamit int
+	Salom      []Tarkib
+}
+
+func tarkiblink(w http.ResponseWriter, r *http.Request) {
+	msg := sessionManager.GetString(r.Context(), "message")
+	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+	sorov := db.QueryRow(getuserval)
+	var name string
+
+	sorov.Scan(&name)
+
+	if name == msg && msg != "" {
+
+		tem, err := template.ParseFiles("template/tarkib.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		var checkkod string
+		urlcode := r.URL.Path
+		urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+		listurl := strings.Split(urlcode, "/")
+		kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
+		kodval := db.QueryRow(kodlist)
+		kodval.Scan(&checkkod)
+
+		if r.FormValue("fiot") != "" && listurl[0] != checkkod {
+			fiot := r.FormValue("fiot")
+			birtht := r.FormValue("birtht")
+			relationt := r.FormValue("relationt")
+			jont := r.FormValue("jont")
+			manzilt := r.FormValue("manzilt")
+			raqamt := r.FormValue("raqamt")
+			vaqtt := r.FormValue("vaqtt")
+			yashasht := r.FormValue("yashasht")
+			foydat := r.FormValue("	foydat")
+			hujjatt := r.FormValue("hujjatt")
+			izoht := r.FormValue("izoht")
+
+			queryinsert := fmt.Sprintf(`insert into tarkib (fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, usert, idselyamit)
+			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, fiot, listurl[0], birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, name, listurl[2])
+
+			_, err = db.Exec(queryinsert)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+		}
+
+		querylike := fmt.Sprintf(`SELECT *
+		FROM
+		tarkib
+		WHERE
+		idselyamit = '%s';`, listurl[2])
+
+		Row := new(Tarkib)
+
+		rows, err := db.Query(querylike)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for rows.Next() {
+			err = rows.Scan(&Row.Idt, &Row.Fiot, &Row.Kodt, &Row.Birtht, &Row.Relationt, &Row.Jont, &Row.Manzilt, &Row.Raqamt, &Row.Vaqtt, &Row.Yashasht, &Row.Foydat, &Row.Hujjatt, &Row.Izoht, &Row.Timet, &Row.Usert, &Row.Idselyamit)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			Row.Salom = append(Row.Salom, Tarkib{Idt: Row.Idt, Fiot: Row.Fiot, Kodt: Row.Kodt, Birtht: Row.Birtht, Relationt: Row.Relationt, Jont: Row.Jont, Manzilt: Row.Manzilt, Raqamt: Row.Raqamt, Vaqtt: Row.Vaqtt, Yashasht: Row.Yashasht, Foydat: Row.Foydat, Hujjatt: Row.Hujjatt, Izoht: Row.Izoht, Timet: Row.Timet, Usert: Row.Usert, Idselyamit: Row.Idselyamit})
+
+			// kochir.Mulk = append(kochir.Mulk, Row.Mulk)
+			// kochir.Kod = append(kochir.Kod, Row.Kod)
+			// kochir.Mahalla = append(kochir.Mahalla, Row.Mahalla)
+			// kochir.Egalik = append(kochir.Egalik, Row.Egalik)
+			// kochir.Pasport = append(kochir.Pasport, Row.Pasport)
+			// kochir.Hujjat = append(kochir.Hujjat, Row.Hujjat)
+			// kochir.Regkitob = append(kochir.Regkitob, Row.Regkitob)
+			// kochir.Kitobbet = append(kochir.Kitobbet, Row.Kitobbet)
+			// kochir.Gosraqam = append(kochir.Gosraqam, Row.Gosraqam)
+			// kochir.Sananomer = append(kochir.Sananomer, Row.Sananomer)
+			// kochir.Miqdor = append(kochir.Miqdor, Row.Miqdor)
+			// kochir.Xona = append(kochir.Xona, Row.Xona)
+			// kochir.Sf = append(kochir.Sf, Row.Sf)
+			// kochir.Sv = append(kochir.Sv, Row.Sv)
+			// kochir.Po = append(kochir.Po, Row.Po)
+			// kochir.Pj = append(kochir.Pj, Row.Pj)
+			// kochir.Pp = append(kochir.Pp, Row.Pp)
+			// kochir.Pzuo = append(kochir.Pzuo, Row.Pzuo)
+			// kochir.Pzuz = append(kochir.Pzuz, Row.Pzuz)
+			// kochir.Pzuzaxvat = append(kochir.Pzuzaxvat, Row.Pzuzaxvat)
+			// kochir.Pzupd = append(kochir.Pzupd, Row.Pzupd)
+			// kochir.Pzupp = append(kochir.Pzupp, Row.Pzupp)
+			// kochir.Npp = append(kochir.Npp, Row.Npp)
+			// kochir.Npk = append(kochir.Npk, Row.Npk)
+			// kochir.Spp = append(kochir.Spp, Row.Spp)
+			// kochir.Spk = append(kochir.Spk, Row.Spk)
+		}
+
+		tem.Execute(w, Row.Salom)
+
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
+	}
+
 }

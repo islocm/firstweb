@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="post">
+        <label for="fiot"></label>
+        <input type="text" name="foit" id="fiot">
+        
+        <label for="birtht"></label>
+        <input type="text" name="birtht" id="birtht">
+        
+        <label for="relationt"></label>
+        <input type="text" name="relationt" id="relationt">
+        
+        <label for="jont"></label>
+        <input type="text" name="jont" id="jont">
+        
+        <label for="manzilt"></label>
+        <input type="text" name="manzilt" id="manzilt">
+        
+        <label for="raqamt"></label>
+        <input type="text" name="raqamt" id="raqamt">
+        
+        <label for="vaqtt"></label>
+        <input type="text" name="vaqtt" id="vaqtt">
+        
+        <label for="yashasht"></label>
+        <input type="text" name="yashasht" id="yashasht">
+        
+        <label for="foydat"></label>
+        <input type="text" name="foydat" id="foydat">
+        
+        <label for="hujjatt"></label>
+        <input type="text" name="hujjatt" id="hujjatt">
+        
+        <label for="izoht"></label>
+        <input type="text" name="izoht" id="izoht">
+        
+        
+    </form>
+
+
+    <table>
+        <tr>
+          <th>Т/р</th>
+          <th>Ф.И.О</th>
+          <th>Туғилган йили</th>
+          <th>Қариндошлик алоқаси</th>
+          <th>Жон боши</th>
+          <th>Бузилишга тушган манзил</th>
+          <th>Уй рақами</th>
+          <th>Рўйхатга қўйилган вақти</th>
+          <th>Яшаш майдони</th>
+          <th>Фойдаланиш майдони</th>
+          <th>Уй жойга тегишли хужжатлар</th>
+          <th>Изох</th>
+          <th>Вақти</th>
+          <th>Фойдаланувчи</th>
+        </tr>
+        {{range .}}
+        <tr>
+          <td>{{.Idt}}</td>
+          <td>{{.Fiot}}</td>
+          <td>{{.Birtht}}</td>
+          <td>{{.Relationt}}</td>
+          <td>{{.Jont}}</td>
+          <td>{{.Manzilt}}</td>
+          <td>{{.Raqamt}}</td>
+          <td>{{.Vaqtt}}</td>
+          <td>{{.Yashasht}}</td>
+          <td>{{.Foydat}}</td>
+          <td>{{.Hujjatt}}</td>
+          <td>{{.Izoht}}</td>
+          <td>{{.Timet}}</td>
+          <td>{{.Usert}}</td>
+         
+        </tr>
+        {{end}}
+      </table>
+</body>
+</html>

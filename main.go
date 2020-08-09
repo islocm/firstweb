@@ -17,8 +17,10 @@ type Name struct {
 }
 
 var sessionManager *scs.SessionManager
-var rNum = regexp.MustCompile(`/d`)      // Has digit(s)
-var rAbc = regexp.MustCompile(`selyami`) // Contains "abc"
+var rNum = regexp.MustCompile(`/d`)        // Has digit(s)
+var rAbc = regexp.MustCompile(`selyami`)   // Contains "abc"
+var rTarkib = regexp.MustCompile(`tarkib`) // Contains "abc"
+
 func main() {
 	e := connection()
 	if e != nil {
