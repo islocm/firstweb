@@ -1199,8 +1199,9 @@ func tarkiblink(w http.ResponseWriter, r *http.Request) {
 		kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
 		kodval := db.QueryRow(kodlist)
 		kodval.Scan(&checkkod)
-
-		if r.FormValue("fiot") != "" && listurl[0] != checkkod {
+		fmt.Println(r.FormValue("fiot"))
+		if r.FormValue("fiot") != "" && listurl[0] == checkkod {
+			fmt.Println("bajarilvoti")
 			fiot := r.FormValue("fiot")
 			birtht := r.FormValue("birtht")
 			relationt := r.FormValue("relationt")
