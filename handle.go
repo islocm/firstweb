@@ -778,6 +778,33 @@ func info(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
+		var checkkod string
+		kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, r.FormValue("kod"))
+		kodval := db.QueryRow(kodlist)
+		kodval.Scan(&checkkod)
+
+		if r.FormValue("kod") != "" && r.FormValue("kod") != checkkod {
+			qaror := r.FormValue("qaror")
+			tuman := r.FormValue("tuman")
+			mahalla := r.FormValue("mahalla")
+			kod := r.FormValue("kod")
+			nedvijimost := r.FormValue("nedvijimost")
+			pravoobladatel := r.FormValue("pravoobladatel")
+			soprovoditelniy := r.FormValue("soprovoditelniy")
+			pzuo := r.FormValue("pzuo")
+			po := r.FormValue("po")
+			pj := r.FormValue("pj")
+			xona := r.FormValue("xona")
+			queryinsert := fmt.Sprintf(`insert into import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
+			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, name)
+
+			_, err = db.Exec(queryinsert)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+		}
 		getval := r.FormValue("getinfo")
 		symval := "%"
 
@@ -833,7 +860,24 @@ func info(w http.ResponseWriter, r *http.Request) {
 
 			tem.Execute(w, Row.Salom)
 		} else {
-			tem.Execute(w, nil)
+			querylike := fmt.Sprintf(`select * from import limit 20; `)
+
+			Row := new(Import)
+
+			rows, err := db.Query(querylike)
+			if err != nil {
+				fmt.Println(err)
+			}
+			for rows.Next() {
+				err = rows.Scan(&Row.ID, &Row.Qaror, &Row.Tuman, &Row.Mahalla, &Row.Kod, &Row.Nedvijimost, &Row.Pravoobladatel, &Row.Soprovoditelniy, &Row.Pzuo, &Row.Po, &Row.Pj, &Row.Xona, &Row.Datei, &Row.Useri)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				Row.Salom = append(Row.Salom, Import{ID: Row.ID, Qaror: Row.Qaror, Tuman: Row.Tuman, Mahalla: Row.Mahalla, Kod: Row.Kod, Nedvijimost: Row.Nedvijimost, Pravoobladatel: Row.Pravoobladatel, Soprovoditelniy: Row.Soprovoditelniy, Pzuo: Row.Pzuo, Po: Row.Po, Pj: Row.Pj, Xona: Row.Xona, Datei: Row.Datei, Useri: Row.Useri})
+
+			}
+			tem.Execute(w, Row.Salom)
 		}
 
 	} else {
@@ -997,9 +1041,10 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 		}
 
 		urlcode := r.URL.Path
-		fmt.Println(urlcode)
+
 		if r.FormValue("jons") != "" {
 			urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+
 			fios := r.FormValue("fios")
 			births := r.FormValue("births")
 			relations := r.FormValue("relations")
