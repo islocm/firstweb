@@ -17,6 +17,7 @@ table {
   margin: 0px;
   border-collapse: collapse;
   width: 100%;
+ 
   
 }
 th {
@@ -45,27 +46,83 @@ td {
 
 }
 tr:hover {background-color:#f5f5f5;}
+form {
+  width: 100%;
+  float: right;
+}
+
+input[type=text] {
+  padding-top: 15px;
+  margin: 15px 0px;
+  display: inline;
+  border: none;
+  border-bottom: 2px solid greenyellow;
+  text-align: center;
+  text-shadow: 1px 1px greenyellow;
+  box-shadow: 5px 5px 4px grey;
+}
+
+.inputgo {
+  width: 6.7%;
+}
+.buttongo {
+  width: 80%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10%;
+  padding: 10px;
+  cursor: pointer;
+  border: solid 1px rgb(red, green, blue);
+  background-color: rgb(132, 230, 132);
+  box-shadow: 5px 5px 2px grey;
+  border-radius: 10px;
+  font-size: 15px;
+  color: white;
+}
+a:link, a:visited {
+  background-color: grey;
+  color: white;
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover, a:active {
+  background-color: rgb(164, 240, 179);
+}
 </style>
 </head>
 <body>
-  <button><a href="/">Home</a></button>
-  <button><a href="/selyami/{{range .}}{{.Kodt}}{{end}}">Selyami</a></button>
-  <button><a href="/selyami/{{range .}}{{.Kodt}}{{end}}/tarkib/{{range .}}{{.Idselyamit}}{{end}}">Refresh</a></button>
+  <a href="/">Home</a>
+  <a href="/information">Ma'lumotlar</a>
+ 
 
     
   <form action="" method="POST">
-    <input type="text" name="fiot" >
-    <input type="text" name="birtht">
-    <input type="text" name="relationt">
-  <input type="text" name="jont">
-  <input type="text" name="manzilt">
-  <input type="text" name="raqamt">
-  <input type="text" name="vaqtt">
-  <input type="text" name="yashasht">
-  <input type="text" name="foydat">
-  <input type="text" name="hujjatt">
-  <input type="text" name="izoht">
-    <input type="submit" value="Save">
+    <label for="fiot"></label>
+    <input type="text" name="fiot" id="fiot" placeholder="Ф.И.О">
+    <label for="birtht"></label>
+    <input type="text" name="birtht" id="birtht" placeholder="Туғилган йили">
+    <label for="relationt"></label>
+    <input type="text" name="relationt" id="relationt" placeholder="Қариндошлик алоқаси">
+    <label for="jont"></label>
+    <input class="inputgo" type="text" name="jont" id="jont" placeholder="Жон боши">
+    <label for="manzilt"></label>
+    <input type="text" name="manzilt" id="manzilt" placeholder="Бузилишга тушган манзил">
+    <label for="raqamt"></label>
+    <input type="text" name="raqamt" id="raqamt" placeholder="Уй рақами">
+    <label for="vaqtt"></label>
+    <input type="text" name="vaqtt" id="vaqtt" placeholder="Рўйхатга қўйилган вақти">
+    <label for="yashasht"></label>
+    <input type="text" name="yashasht" id="yashasht" placeholder="Яшаш майдони">
+    <label for="foydat"></label>
+    <input type="text" name="foydat" id="foydat" placeholder="Фойдаланиш майдони">
+    <label for="hujjatt"></label>
+    <input type="text" name="hujjatt" id="hujjatt" placeholder="Уй жойга тегишли хужжат">
+    <label for="izoht"></label>
+    <input type="text" name="izoht" id="izoht" placeholder="Изох"><br>
+    <input class="buttongo" type="submit" value="Save">
   </form>
 
     <table>
