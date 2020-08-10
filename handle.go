@@ -939,74 +939,76 @@ func element(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			getsheet := exfile.GetSheetList()
+			exfile.GetRows(getsheet[0])
 
 			rows, err := exfile.GetRows(getsheet[0])
-			fmt.Println(len(rows))
+			length := len(rows[0])
+			if length == 11 {
+				for _, row := range rows {
+					var dbval []string
+					getinfo, err := db.Query(`select kod from import`)
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+					for getinfo.Next() {
+						var asval string
+						getinfo.Scan(&asval)
+						dbval = append(dbval, asval)
 
-			for _, row := range rows {
-				var dbval []string
-				getinfo, err := db.Query(`select kod from import`)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				for getinfo.Next() {
-					var asval string
-					getinfo.Scan(&asval)
-					dbval = append(dbval, asval)
+					}
 
-				}
+					if dbval != nil {
+						for lentarget, valtarget := range dbval {
 
-				if dbval != nil {
-					for lentarget, valtarget := range dbval {
+							if valtarget == row[3] {
+								row[5] = strings.ReplaceAll(row[5], "'", "")
+								row[6] = strings.ReplaceAll(row[6], "'", "")
 
-						if valtarget == row[3] {
-							row[5] = strings.ReplaceAll(row[5], "'", "")
-							row[6] = strings.ReplaceAll(row[6], "'", "")
-
-							dbsorov := fmt.Sprintf(`UPDATE import
+								dbsorov := fmt.Sprintf(`UPDATE import
 					SET qaror = '%s', tuman = '%s', mahalla= '%s', nedvijimost = '%s', pravoobladatel = '%s',
 					soprovoditelniy = '%s', pzuo = '%s', po = '%s', pj = '%s', xona = '%s', useri = '%s'
 					WHERE kod = '%s';`, row[0], row[1], row[2], row[4], row[5], row[6], row[7], row[8], row[9], row[10], name, valtarget)
 
-							_, err = db.Exec(dbsorov)
-							if err != nil {
-								fmt.Println(err.Error())
-								return
+								_, err = db.Exec(dbsorov)
+								if err != nil {
+									fmt.Println(err.Error())
+									return
 
-							}
+								}
 
-							break
+								break
 
-						} else if len(dbval)-1 == lentarget {
-							row[5] = strings.ReplaceAll(row[5], "'", "")
-							row[6] = strings.ReplaceAll(row[6], "'", "")
+							} else if len(dbval)-1 == lentarget {
+								row[5] = strings.ReplaceAll(row[5], "'", "")
+								row[6] = strings.ReplaceAll(row[6], "'", "")
 
-							dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
+								dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
 							VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], name)
 
-							_, err = db.Exec(dbsorov1)
-							if err != nil {
-								fmt.Println(err)
-								return
+								_, err = db.Exec(dbsorov1)
+								if err != nil {
+									fmt.Println(err)
+									return
+
+								}
 
 							}
 
 						}
-
-					}
-				} else {
-					dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
+					} else {
+						dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
 					VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], name)
-					_, err = db.Exec(dbsorov1)
-					if err != nil {
-						fmt.Println(err)
-						return
+						_, err = db.Exec(dbsorov1)
+						if err != nil {
+							fmt.Println(err)
+							return
+
+						}
 
 					}
 
 				}
-
 			}
 			file.Close()
 			f.Close()
