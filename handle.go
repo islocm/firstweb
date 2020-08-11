@@ -18,6 +18,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case rNum.MatchString(r.URL.Path):
 		digits(w, r)
+	case rChange.MatchString(r.URL.Path):
+		changego(w, r)
 	case rTarkib.MatchString(r.URL.Path):
 		tarkiblink(w, r)
 	case rAbc.MatchString(r.URL.Path):
@@ -192,7 +194,7 @@ func spisok(w http.ResponseWriter, r *http.Request) {
 				&row.npk,
 				&row.spp,
 				&row.spk)
-			fmt.Println("hato")
+
 			fmt.Println(row.mulk)
 			repairnull := ""
 
@@ -211,7 +213,6 @@ func spisok(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 				return
 			}
-			fmt.Println("hato1")
 
 		}
 		// If else
@@ -223,11 +224,11 @@ func spisok(w http.ResponseWriter, r *http.Request) {
 			valforupdate4 := r.FormValue("huquqs")
 			valforupdate5 := r.FormValue("xonas")
 			valforupdate6 := r.FormValue("izoh")
-			fmt.Println(valforupdate)
+
 			dbsorov := fmt.Sprintf(`UPDATE "Selyami"
 					SET tumans = '%s', kompensatsiyas = '%s', sostavs = '%s', huquqs = '%s', xonas = '%s', izoh = '%s', users = '%s'
 					WHERE kods = '%s';`, valforupdate, valforupdate2, valforupdate3, valforupdate4, valforupdate5, valforupdate6, name, valforupdate1)
-			fmt.Println(dbsorov)
+
 			_, err = db.Exec(dbsorov)
 			if err != nil {
 				fmt.Println(err)
@@ -349,7 +350,11 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 		getsheet := exfile.GetSheetList()
 
 		rows, err := exfile.GetRows(getsheet[0])
-		fmt.Println(len(rows))
+
+		defer os.Remove(header.Filename)
+		defer f.Close()
+		defer file.Close()
+
 		for _, row := range rows {
 			var dbval []string
 			getinfo, err := db.Query(`select kod from kadastr`)
@@ -417,13 +422,6 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 
 			}
 
-		}
-		file.Close()
-		f.Close()
-		err = os.Remove(header.Filename)
-		if err != nil {
-			fmt.Println(err)
-			return
 		}
 
 	}
@@ -646,32 +644,6 @@ ORDER BY
 			}
 			Row.Salom = append(Row.Salom, Nomida{Mulk: Row.Mulk, Kod: Row.Kod, Mahalla: Row.Mahalla, Egalik: Row.Egalik, Pasport: Row.Pasport, Hujjat: Row.Hujjat, Regkitob: Row.Regkitob, Kitobbet: Row.Kitobbet, Gosraqam: Row.Gosraqam, Sananomer: Row.Sananomer, Miqdor: Row.Miqdor, Xona: Row.Xona, Sf: Row.Sf, Sv: Row.Sv, Po: Row.Po, Pj: Row.Pj, Pp: Row.Pp, Pzuo: Row.Pzuo, Pzuz: Row.Pzuz, Pzuzaxvat: Row.Pzuzaxvat, Pzupd: Row.Pzupd, Pzupp: Row.Pzupp, Npp: Row.Npp, Npk: Row.Npk, Spp: Row.Spp, Spk: Row.Spk})
 
-			// kochir.Mulk = append(kochir.Mulk, Row.Mulk)
-			// kochir.Kod = append(kochir.Kod, Row.Kod)
-			// kochir.Mahalla = append(kochir.Mahalla, Row.Mahalla)
-			// kochir.Egalik = append(kochir.Egalik, Row.Egalik)
-			// kochir.Pasport = append(kochir.Pasport, Row.Pasport)
-			// kochir.Hujjat = append(kochir.Hujjat, Row.Hujjat)
-			// kochir.Regkitob = append(kochir.Regkitob, Row.Regkitob)
-			// kochir.Kitobbet = append(kochir.Kitobbet, Row.Kitobbet)
-			// kochir.Gosraqam = append(kochir.Gosraqam, Row.Gosraqam)
-			// kochir.Sananomer = append(kochir.Sananomer, Row.Sananomer)
-			// kochir.Miqdor = append(kochir.Miqdor, Row.Miqdor)
-			// kochir.Xona = append(kochir.Xona, Row.Xona)
-			// kochir.Sf = append(kochir.Sf, Row.Sf)
-			// kochir.Sv = append(kochir.Sv, Row.Sv)
-			// kochir.Po = append(kochir.Po, Row.Po)
-			// kochir.Pj = append(kochir.Pj, Row.Pj)
-			// kochir.Pp = append(kochir.Pp, Row.Pp)
-			// kochir.Pzuo = append(kochir.Pzuo, Row.Pzuo)
-			// kochir.Pzuz = append(kochir.Pzuz, Row.Pzuz)
-			// kochir.Pzuzaxvat = append(kochir.Pzuzaxvat, Row.Pzuzaxvat)
-			// kochir.Pzupd = append(kochir.Pzupd, Row.Pzupd)
-			// kochir.Pzupp = append(kochir.Pzupp, Row.Pzupp)
-			// kochir.Npp = append(kochir.Npp, Row.Npp)
-			// kochir.Npk = append(kochir.Npk, Row.Npk)
-			// kochir.Spp = append(kochir.Spp, Row.Spp)
-			// kochir.Spk = append(kochir.Spk, Row.Spk)
 		}
 
 		temp.Execute(w, Row.Salom)
@@ -940,7 +912,9 @@ func element(w http.ResponseWriter, r *http.Request) {
 			}
 			getsheet := exfile.GetSheetList()
 			exfile.GetRows(getsheet[0])
-
+			defer os.Remove(header.Filename)
+			defer f.Close()
+			defer file.Close()
 			rows, err := exfile.GetRows(getsheet[0])
 			length := len(rows[0])
 			if length == 11 {
@@ -1009,13 +983,6 @@ func element(w http.ResponseWriter, r *http.Request) {
 					}
 
 				}
-			}
-			file.Close()
-			f.Close()
-			err = os.Remove(header.Filename)
-			if err != nil {
-				fmt.Println(err)
-				return
 			}
 
 		}
@@ -1201,9 +1168,9 @@ func tarkiblink(w http.ResponseWriter, r *http.Request) {
 		kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
 		kodval := db.QueryRow(kodlist)
 		kodval.Scan(&checkkod)
-		fmt.Println(r.FormValue("fiot"))
+
 		if r.FormValue("fiot") != "" && listurl[0] == checkkod {
-			fmt.Println("bajarilvoti")
+
 			fiot := r.FormValue("fiot")
 			birtht := r.FormValue("birtht")
 			relationt := r.FormValue("relationt")
@@ -1247,32 +1214,204 @@ func tarkiblink(w http.ResponseWriter, r *http.Request) {
 			}
 			Row.Salom = append(Row.Salom, Tarkib{Idt: Row.Idt, Fiot: Row.Fiot, Kodt: Row.Kodt, Birtht: Row.Birtht, Relationt: Row.Relationt, Jont: Row.Jont, Manzilt: Row.Manzilt, Raqamt: Row.Raqamt, Vaqtt: Row.Vaqtt, Yashasht: Row.Yashasht, Foydat: Row.Foydat, Hujjatt: Row.Hujjatt, Izoht: Row.Izoht, Timet: Row.Timet, Usert: Row.Usert, Idselyamit: Row.Idselyamit})
 
-			// kochir.Mulk = append(kochir.Mulk, Row.Mulk)
-			// kochir.Kod = append(kochir.Kod, Row.Kod)
-			// kochir.Mahalla = append(kochir.Mahalla, Row.Mahalla)
-			// kochir.Egalik = append(kochir.Egalik, Row.Egalik)
-			// kochir.Pasport = append(kochir.Pasport, Row.Pasport)
-			// kochir.Hujjat = append(kochir.Hujjat, Row.Hujjat)
-			// kochir.Regkitob = append(kochir.Regkitob, Row.Regkitob)
-			// kochir.Kitobbet = append(kochir.Kitobbet, Row.Kitobbet)
-			// kochir.Gosraqam = append(kochir.Gosraqam, Row.Gosraqam)
-			// kochir.Sananomer = append(kochir.Sananomer, Row.Sananomer)
-			// kochir.Miqdor = append(kochir.Miqdor, Row.Miqdor)
-			// kochir.Xona = append(kochir.Xona, Row.Xona)
-			// kochir.Sf = append(kochir.Sf, Row.Sf)
-			// kochir.Sv = append(kochir.Sv, Row.Sv)
-			// kochir.Po = append(kochir.Po, Row.Po)
-			// kochir.Pj = append(kochir.Pj, Row.Pj)
-			// kochir.Pp = append(kochir.Pp, Row.Pp)
-			// kochir.Pzuo = append(kochir.Pzuo, Row.Pzuo)
-			// kochir.Pzuz = append(kochir.Pzuz, Row.Pzuz)
-			// kochir.Pzuzaxvat = append(kochir.Pzuzaxvat, Row.Pzuzaxvat)
-			// kochir.Pzupd = append(kochir.Pzupd, Row.Pzupd)
-			// kochir.Pzupp = append(kochir.Pzupp, Row.Pzupp)
-			// kochir.Npp = append(kochir.Npp, Row.Npp)
-			// kochir.Npk = append(kochir.Npk, Row.Npk)
-			// kochir.Spp = append(kochir.Spp, Row.Spp)
-			// kochir.Spk = append(kochir.Spk, Row.Spk)
+		}
+
+		tem.Execute(w, Row.Salom)
+
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
+	}
+
+}
+
+func selyamiexcel(w http.ResponseWriter, r *http.Request) {
+	msg := sessionManager.GetString(r.Context(), "message")
+	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+	sorov := db.QueryRow(getuserval)
+	var name string
+
+	sorov.Scan(&name)
+
+	if name == msg && msg != "" {
+		if r.FormValue("exwork") == "" {
+			tem, err := template.ParseFiles("template/element.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			tem.Execute(w, nil)
+		} else {
+
+			body := &bytes.Buffer{}
+			writer := multipart.NewWriter(body)
+
+			r.Header.Add("Content-Type", writer.FormDataContentType())
+			r.ParseMultipartForm(32 << 20)
+			file, header, err := r.FormFile("exwork")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			f, err := os.OpenFile("./"+header.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			io.Copy(f, file)
+
+			exfile, err := excelize.OpenFile(header.Filename)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			getsheet := exfile.GetSheetList()
+			exfile.GetRows(getsheet[0])
+
+			defer os.Remove(header.Filename)
+			defer f.Close()
+			defer file.Close()
+
+			rows, err := exfile.GetRows(getsheet[0])
+			length := len(rows[0])
+			if length == 12 {
+				for _, row := range rows {
+
+					selyamiquery := fmt.Sprintf(`insert into selyami (fios, kods, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, users)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], name)
+					_, err = db.Exec(selyamiquery)
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+
+					var num int
+
+					idselyami := db.QueryRow(`select ids from selyami order by ids desc;`)
+					idselyami.Scan(&num)
+
+					selyamilinkquery := fmt.Sprintf(`insert into tarkib (fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, usert, idselyamit)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], name, num)
+
+					_, err = db.Exec(selyamilinkquery)
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+
+				}
+			}
+
+		}
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		tem.Execute(w, nil)
+	}
+}
+
+func changego(w http.ResponseWriter, r *http.Request) {
+	msg := sessionManager.GetString(r.Context(), "message")
+	getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+	sorov := db.QueryRow(getuserval)
+	var name string
+
+	sorov.Scan(&name)
+
+	if name == msg && msg != "" {
+
+		tem, err := template.ParseFiles("template/change.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		var checkkod string
+		urlcode := r.URL.Path
+		urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+		listurl := strings.Split(urlcode, "/")
+		kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
+		kodval := db.QueryRow(kodlist)
+		kodval.Scan(&checkkod)
+
+		if r.FormValue("fiot") != "" && listurl[0] == checkkod {
+
+			fiot := r.FormValue("fiot")
+			birtht := r.FormValue("birtht")
+			relationt := r.FormValue("relationt")
+			jont := r.FormValue("jont")
+			manzilt := r.FormValue("manzilt")
+			raqamt := r.FormValue("raqamt")
+			vaqtt := r.FormValue("vaqtt")
+			yashasht := r.FormValue("yashasht")
+			foydat := r.FormValue("	foydat")
+			hujjatt := r.FormValue("hujjatt")
+			izoht := r.FormValue("izoht")
+			if r.FormValue("relationt") == "О/Б" {
+				queryinsert := fmt.Sprintf(`UPDATE tarkib 
+			SET fiot = '%s', kodt = '%s', birtht = '%s', relationt = '%s', jont = '%s', manzilt = '%s', raqamt = '%s', vaqtt = '%s', yashasht = '%s',
+			foydat = '%s', hujjatt = '%s', izoht = '%s', usert = '%s'
+			WHERE idt = '%s';`, fiot, listurl[0], birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, name, listurl[4])
+
+				_, err = db.Exec(queryinsert)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				queryinsert2 := fmt.Sprintf(`UPDATE selyami 
+			SET fios = '%s', kods = '%s', births = '%s', relations = '%s', jons = '%s', manzils = '%s', raqams = '%s', vaqts = '%s', yashashs = '%s',
+			foydas = '%s', hujjats = '%s', izohs = '%s', users = '%s'
+			WHERE ids = '%s';`, fiot, listurl[0], birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, name, listurl[2])
+				_, err = db.Exec(queryinsert2)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			} else {
+				queryinsert3 := fmt.Sprintf(`UPDATE tarkib 
+			SET fiot = '%s', kodt = '%s', birtht = '%s', relationt = '%s', jont = '%s', manzilt = '%s', raqamt = '%s', vaqtt = '%s', yashasht = '%s',
+			foydat = '%s', hujjatt = '%s', izoht = '%s', usert = '%s'
+			WHERE idt = '%s';`, fiot, listurl[0], birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, name, listurl[4])
+
+				_, err = db.Exec(queryinsert3)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			}
+		}
+
+		querylike := fmt.Sprintf(`SELECT *
+		FROM
+		tarkib
+		WHERE
+		idt = '%s';`, listurl[4])
+
+		Row := new(Tarkib)
+
+		rows, err := db.Query(querylike)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for rows.Next() {
+			err = rows.Scan(&Row.Idt, &Row.Fiot, &Row.Kodt, &Row.Birtht, &Row.Relationt, &Row.Jont, &Row.Manzilt, &Row.Raqamt, &Row.Vaqtt, &Row.Yashasht, &Row.Foydat, &Row.Hujjatt, &Row.Izoht, &Row.Timet, &Row.Usert, &Row.Idselyamit)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			Row.Salom = append(Row.Salom, Tarkib{Idt: Row.Idt, Fiot: Row.Fiot, Kodt: Row.Kodt, Birtht: Row.Birtht, Relationt: Row.Relationt, Jont: Row.Jont, Manzilt: Row.Manzilt, Raqamt: Row.Raqamt, Vaqtt: Row.Vaqtt, Yashasht: Row.Yashasht, Foydat: Row.Foydat, Hujjatt: Row.Hujjatt, Izoht: Row.Izoht, Timet: Row.Timet, Usert: Row.Usert, Idselyamit: Row.Idselyamit})
+
 		}
 
 		tem.Execute(w, Row.Salom)

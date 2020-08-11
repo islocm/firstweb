@@ -164,7 +164,14 @@ a:link {
     
         <input type="text" name="fios" placeholder="Ф.И.О">
         <input type="text" name="births" placeholder="Туғилган йили">
-        <input type="text" name="relations" placeholder="Қариндошлик алоқаси">
+        <input type="text" name="relations" placeholder="Қариндошлик алоқаси" list="relation" value="О/Б">
+        <datalist id="relation">
+          <option value="О/Б" active>
+          <option value="аёли">
+          <option value="қизи">
+          <option value="ўғли">
+          <option value="келини">
+        </datalist>
         <input type="text" name="jons" placeholder="Жон боши">
         <input type="text" name="manzils" placeholder="Бузилишга тушган манзил">
         <input type="text" name="raqams" placeholder="Уй рақами">

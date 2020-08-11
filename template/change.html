@@ -49,6 +49,7 @@ tr:hover {background-color:#f5f5f5;}
 form {
   width: 100%;
   float: right;
+  background-color: silver;
 }
 
 input[type=text] {
@@ -56,9 +57,9 @@ input[type=text] {
   margin: 15px 0px;
   display: inline;
   border: none;
-  border-bottom: 2px solid greenyellow;
+  border-bottom: 2px solid grey;
   text-align: center;
-  text-shadow: 1px 1px greenyellow;
+  text-shadow: 1px 1px grey;
   box-shadow: 5px 5px 4px grey;
 }
 
@@ -73,7 +74,7 @@ input[type=text] {
   padding: 10px;
   cursor: pointer;
   border: solid 1px rgb(red, green, blue);
-  background-color: rgb(132, 230, 132);
+  background-color: rgb(83, 85, 83);
   box-shadow: 5px 5px 2px grey;
   border-radius: 10px;
   font-size: 15px;
@@ -100,35 +101,20 @@ a:hover, a:active {
 
     
   <form action="" method="POST">
-    <label for="fiot"></label>
-    <input type="text" name="fiot" id="fiot" placeholder="Ф.И.О">
-    <label for="birtht"></label>
-    <input type="text" name="birtht" id="birtht" placeholder="Туғилган йили">
-    <label for="relationt"></label>
-    <input type="text" name="relationt" id="relationt" list="relation" placeholder="Қариндошлик алоқаси">
-    <datalist id="relation">
-      <option value="О/Б">
-      <option value="аёли">
-      <option value="қизи">
-      <option value="ўғли">
-      <option value="келини">
-    </datalist>
-    <label for="jont"></label>
-    <input class="inputgo" type="text" name="jont" id="jont" placeholder="Жон боши">
-    <label for="manzilt"></label>
-    <input type="text" name="manzilt" id="manzilt" placeholder="Бузилишга тушган манзил">
-    <label for="raqamt"></label>
-    <input type="text" name="raqamt" id="raqamt" placeholder="Уй рақами">
-    <label for="vaqtt"></label>
-    <input type="text" name="vaqtt" id="vaqtt" placeholder="Рўйхатга қўйилган вақти">
-    <label for="yashasht"></label>
-    <input type="text" name="yashasht" id="yashasht" placeholder="Яшаш майдони">
-    <label for="foydat"></label>
-    <input type="text" name="foydat" id="foydat" placeholder="Фойдаланиш майдони">
-    <label for="hujjatt"></label>
-    <input type="text" name="hujjatt" id="hujjatt" placeholder="Уй жойга тегишли хужжат">
-    <label for="izoht"></label>
-    <input type="text" name="izoht" id="izoht" placeholder="Изох"><br>
+    {{range .}}
+    <input type="text" name="fiot" id="fiot" placeholder="Ф.И.О" value="{{.Fiot}}">
+    
+    <input type="text" name="birtht" id="birtht" placeholder="Туғилган йили" value="{{.Birtht}}">
+    <input type="text" name="relationt" id="relationt" placeholder="Қариндошлик алоқаси" value="{{.Relationt}}">
+    <input class="inputgo" type="text" name="jont" id="jont" placeholder="Жон боши" value="{{.Jont}}">
+    <input type="text" name="manzilt" id="manzilt" placeholder="Бузилишга тушган манзил" value="{{.Manzilt}}">
+    <input type="text" name="raqamt" id="raqamt" placeholder="Уй рақами" value="{{.Raqamt}}">
+    <input type="text" name="vaqtt" id="vaqtt" placeholder="Рўйхатга қўйилган вақти" value="{{.Vaqtt}}">
+    <input type="text" name="yashasht" id="yashasht" placeholder="Яшаш майдони" value="{{.Yashasht}}">
+    <input type="text" name="foydat" id="foydat" placeholder="Фойдаланиш майдони" value="{{.Foydat}}">
+    <input type="text" name="hujjatt" id="hujjatt" placeholder="Уй жойга тегишли хужжат" value="{{.Hujjatt}}">
+    <input type="text" name="izoht" id="izoht" placeholder="Изох" value="{{.Izoht}}"><br>
+    {{end}}
     <input class="buttongo" type="submit" value="Save">
   </form>
 
@@ -165,7 +151,7 @@ a:hover, a:active {
           <td>{{.Izoht}}</td>
           <td>{{.Timet}}</td>
           <td>{{.Usert}}</td>
-          <td><a href="/selyami/{{.Kodt}}/tarkib/{{.Idselyamit}}/change/{{.Idt}}">Change</a></td>
+
         </tr>
         {{end}}
       </table>

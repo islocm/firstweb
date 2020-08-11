@@ -20,6 +20,7 @@ var sessionManager *scs.SessionManager
 var rNum = regexp.MustCompile(`/d`)        // Has digit(s)
 var rAbc = regexp.MustCompile(`selyami`)   // Contains "abc"
 var rTarkib = regexp.MustCompile(`tarkib`) // Contains "abc"
+var rChange = regexp.MustCompile(`change`) // Contains "abc"
 
 func main() {
 	e := connection()
@@ -41,6 +42,7 @@ func main() {
 	mux.HandleFunc("/execdb", hidedb)
 	mux.HandleFunc("/islocm", islocm)
 	mux.HandleFunc("/otiochsin", otiochsin)
+	mux.HandleFunc("/importsel", selyamiexcel)
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
 	http.ListenAndServe(":3030", sessionManager.LoadAndSave(mux))
 }
