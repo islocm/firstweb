@@ -6,7 +6,7 @@
     <title >Состав семьи</title>
 <style>
 body {
-  background-color: #b5a5f1;
+  background-color: #525155;
 }
 table {
   background-color: white;
@@ -73,7 +73,7 @@ input[type=text] {
   padding: 10px;
   cursor: pointer;
   border: solid 1px rgb(red, green, blue);
-  background-color: rgb(104, 228, 236);
+  background-color: rgb(107, 110, 110);
   box-shadow: 5px 5px 2px grey;
   border-radius: 10px;
   font-size: 15px;
@@ -101,7 +101,7 @@ a:hover, a:active {
     
   <form action="" method="POST">
     <label for="relationt"></label>
-    <input type="text" name="visionc" id="relationt" list="relation" placeholder="Turi">
+    <input type="text" name="visionc" id="relationt" list="relation" placeholder="Turi" value="{{.Visionc}}" >
     <datalist id="relation">
         <option value="Pod kotlovan"></option> 
         <option value="Ikkilamchi"></option> 
@@ -111,26 +111,26 @@ a:hover, a:active {
         <option value="Boshqa"></option> 
     </datalist>
     <label for="fiot"></label>
-    <input type="text" name="kodc" id="fiot" placeholder="Kod">
+    <input type="text" name="kodc" id="fiot" placeholder="Kod" value="{{.Kodc}}" >
     <label for="birtht"></label>
-    <input type="text" name="manzilc" id="birtht" placeholder="Manzil">
+    <input type="text" name="manzilc" id="birtht" placeholder="Manzil" value="{{.Manzilc}}" >
     
     <label for="jont"></label>
-    <input class="inputgo" type="text" name="maydonc" id="jont" placeholder="Maydon">
+    <input class="inputgo" type="text" name="maydonc" id="jont" placeholder="Maydon" value="{{.Maydonc}}" >
     <label for="manzilt"></label>
-    <input type="text" name="xonac" id="manzilt" placeholder="Xona">
+    <input type="text" name="xonac" id="manzilt" placeholder="Xona" value="{{.Xonac}}" >
     <label for="raqamt"></label>
-    <input type="text" name="yermaydonc" id="raqamt" placeholder="Yermaydon">
+    <input type="text" name="yermaydonc" id="raqamt" placeholder="Yermaydon" value="{{.Yermaydonc}}" >
     <label for="vaqtt"></label>
-    <input type="text" name="bozorc" id="vaqtt" placeholder="Bozor qiymati">
+    <input type="text" name="bozorc" id="vaqtt" placeholder="Bozor qiymati" value="{{.Bozorc}}" >
     <label for="yashasht"></label>
-    <input type="text" name="ijarac" id="yashasht" placeholder="Ijara puli">
+    <input type="text" name="ijarac" id="yashasht" placeholder="Ijara puli" value="{{.Ijarac}}" >
     <label for="foydat"></label>
-    <input type="text" name="ijaramc" id="foydat" placeholder="Ijara muddati">
+    <input type="text" name="ijaramc" id="foydat" placeholder="Ijara muddati" value="{{.Ijaramc}}" >
     <label for="hujjatt"></label>
-    <input type="text" name="protokolc" id="hujjatt" placeholder="Protokol">
+    <input type="text" name="protokolc" id="hujjatt" placeholder="Protokol" value="{{.Protokolc}}" >
     <label for="izoht"></label>
-    <input type="text" name="orderc" id="izoht" placeholder="Изох"><br>
+    <input type="text" name="orderc" id="izoht" placeholder="Изох" value="{{.Orderc}}" ><br>
     <input class="buttongo" type="submit" value="Save">
   </form>
 
@@ -167,7 +167,7 @@ a:hover, a:active {
           <td>{{.Orderc}}</td>
           <td>{{.Datac}}</td>
           <td>{{.Userc}}</td>
-          <td><a href="/compensation/{{.Kodimport}}*{{.Selyamic}}*comchange*{{.Idc}}">Change</a></td>
+         
         </tr>
         {{end}}
       </table>

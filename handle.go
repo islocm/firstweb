@@ -24,7 +24,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 		tarkiblink(w, r)
 	case rAbc.MatchString(r.URL.Path):
 		selyamilink(w, r)
-	case rNum.MatchString(r.URL.Path):
+	case rComchange.MatchString(r.URL.Path):
+		comchange(w, r)
+	case rCom.MatchString(r.URL.Path):
 		compensation(w, r)
 	default:
 		tem, err := template.ParseFiles("template/index.html")
@@ -1300,14 +1302,13 @@ func tarkiblink(w http.ResponseWriter, r *http.Request) {
 			var checkkod string
 			urlcode := r.URL.Path
 			urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
-			qwe := strings.ReplaceAll(urlcode, "/tarkib/1")
-			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, qwe)
-			kodval.Scan(&checkkod)
+
+			listurl := strings.Split(urlcode, "*")
+
+			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
 			kodval := db.QueryRow(kodlist)
-			urlcode = strings.ReplaceAll(urlcode, "/01", "")
-			listurl := strings.Split(urlcode, "/")
-			fmt.Println(listurl[0])
-			fmt.Println(checkkod)
+			kodval.Scan(&checkkod)
+
 			if r.FormValue("fiot") != "" && listurl[0] == checkkod {
 
 				fiot := r.FormValue("fiot")
@@ -1491,7 +1492,7 @@ func changego(w http.ResponseWriter, r *http.Request) {
 			var checkkod string
 			urlcode := r.URL.Path
 			urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
-			listurl := strings.Split(urlcode, "/")
+			listurl := strings.Split(urlcode, "*")
 			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
 			kodval := db.QueryRow(kodlist)
 			kodval.Scan(&checkkod)
@@ -1588,8 +1589,30 @@ func changego(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Compensation qweasd qwads
+type Compensation struct {
+	Idc        string
+	Kodimport  string
+	Visionc    string
+	Kodc       string
+	Manzilc    string
+	Maydonc    string
+	Xonac      string
+	Yermaydonc string
+	Bozorc     string
+	Ijarac     string
+	Ijaramc    string
+	Protokolc  string
+	Orderc     string
+	Datac      string
+	Userc      string
+	Idselyamic string
+	Salom      []Compensation
+}
+
 func compensation(w http.ResponseWriter, r *http.Request) {
 	qwe := sessionManager.Keys(r.Context())
+
 	if len(qwe) == 1 {
 		msg := sessionManager.GetString(r.Context(), qwe[0])
 		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
@@ -1600,7 +1623,7 @@ func compensation(w http.ResponseWriter, r *http.Request) {
 
 		if name == msg && msg != "" {
 
-			tem, err := template.ParseFiles("template/tarkib.html")
+			tem, err := template.ParseFiles("template/compensation.html")
 			if err != nil {
 				fmt.Println(err)
 				return
@@ -1608,27 +1631,27 @@ func compensation(w http.ResponseWriter, r *http.Request) {
 			var checkkod string
 			urlcode := r.URL.Path
 			urlcode = strings.ReplaceAll(urlcode, "/compensation/", "")
-			listurl := strings.Split(urlcode, "/")
+			listurl := strings.Split(urlcode, "*")
 			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
 			kodval := db.QueryRow(kodlist)
 			kodval.Scan(&checkkod)
 
-			if r.FormValue("fiot") != "" && listurl[0] == checkkod {
+			if r.FormValue("manzilc") != "" && listurl[0] == checkkod {
 
-				fiot := r.FormValue("fiot")
-				birtht := r.FormValue("birtht")
-				relationt := r.FormValue("relationt")
-				jont := r.FormValue("jont")
-				manzilt := r.FormValue("manzilt")
-				raqamt := r.FormValue("raqamt")
-				vaqtt := r.FormValue("vaqtt")
-				yashasht := r.FormValue("yashasht")
-				foydat := r.FormValue("	foydat")
-				hujjatt := r.FormValue("hujjatt")
-				izoht := r.FormValue("izoht")
+				visionc := r.FormValue("visionc")
+				kodc := r.FormValue("kodc")
+				manzilc := r.FormValue("manzilc")
+				maydonc := r.FormValue("maydonc")
+				xonac := r.FormValue("xonac")
+				yermaydonc := r.FormValue("yermaydonc")
+				bozorc := r.FormValue("bozorc")
+				ijarac := r.FormValue("ijarac")
+				ijaramc := r.FormValue("ijaramc")
+				protokolc := r.FormValue("protokolc")
+				orderc := r.FormValue("orderc")
 
-				queryinsert := fmt.Sprintf(`insert into tarkib (fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, usert, idselyamit)
-			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, fiot, listurl[0], birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, name, listurl[2])
+				queryinsert := fmt.Sprintf(`insert into compensation (kodimport, visionc, kodc, manzilc, maydonc, xonac, yermaydonc, bozorc, ijarac, ijaramc, protokolc, orderc, userc, idselyamic)
+			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, listurl[0], visionc, kodc, manzilc, maydonc, xonac, yermaydonc, bozorc, ijarac, ijaramc, protokolc, orderc, name, listurl[1])
 
 				_, err = db.Exec(queryinsert)
 				if err != nil {
@@ -1640,23 +1663,23 @@ func compensation(w http.ResponseWriter, r *http.Request) {
 
 			querylike := fmt.Sprintf(`SELECT *
 		FROM
-		tarkib
+		compensation
 		WHERE
-		idselyamit = '%s';`, listurl[2])
+		idselyamic = '%s';`, listurl[1])
 
-			Row := new(Tarkib)
+			Row := new(Compensation)
 
 			rows, err := db.Query(querylike)
 			if err != nil {
 				fmt.Println(err)
 			}
 			for rows.Next() {
-				err = rows.Scan(&Row.Idt, &Row.Fiot, &Row.Kodt, &Row.Birtht, &Row.Relationt, &Row.Jont, &Row.Manzilt, &Row.Raqamt, &Row.Vaqtt, &Row.Yashasht, &Row.Foydat, &Row.Hujjatt, &Row.Izoht, &Row.Timet, &Row.Usert, &Row.Idselyamit)
+				err = rows.Scan(&Row.Idc, &Row.Kodimport, &Row.Kodc, &Row.Manzilc, &Row.Maydonc, &Row.Xonac, &Row.Yermaydonc, &Row.Bozorc, &Row.Ijarac, &Row.Ijaramc, &Row.Protokolc, &Row.Orderc, &Row.Datac, &Row.Userc, &Row.Idselyamic)
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
-				Row.Salom = append(Row.Salom, Tarkib{Idt: Row.Idt, Fiot: Row.Fiot, Kodt: Row.Kodt, Birtht: Row.Birtht, Relationt: Row.Relationt, Jont: Row.Jont, Manzilt: Row.Manzilt, Raqamt: Row.Raqamt, Vaqtt: Row.Vaqtt, Yashasht: Row.Yashasht, Foydat: Row.Foydat, Hujjatt: Row.Hujjatt, Izoht: Row.Izoht, Timet: Row.Timet, Usert: Row.Usert, Idselyamit: Row.Idselyamit})
+				Row.Salom = append(Row.Salom, Compensation{Idc: Row.Idc, Kodimport: Row.Kodimport, Kodc: Row.Kodc, Manzilc: Row.Manzilc, Maydonc: Row.Maydonc, Xonac: Row.Xonac, Yermaydonc: Row.Yermaydonc, Bozorc: Row.Bozorc, Ijarac: Row.Ijarac, Ijaramc: Row.Ijaramc, Protokolc: Row.Protokolc, Orderc: Row.Orderc, Datac: Row.Datac, Userc: Row.Userc, Idselyamic: Row.Idselyamic})
 
 			}
 
@@ -1704,7 +1727,8 @@ func zaprost(w http.ResponseWriter, r *http.Request) {
 			querylike := fmt.Sprintf(`SELECT *
 		FROM
 		tarkib
-		order by idt;`)
+		order by idselyamit,
+		idt asc;`)
 
 			Row := new(Tarkib)
 
@@ -1719,6 +1743,103 @@ func zaprost(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				Row.Salom = append(Row.Salom, Tarkib{Idt: Row.Idt, Fiot: Row.Fiot, Kodt: Row.Kodt, Birtht: Row.Birtht, Relationt: Row.Relationt, Jont: Row.Jont, Manzilt: Row.Manzilt, Raqamt: Row.Raqamt, Vaqtt: Row.Vaqtt, Yashasht: Row.Yashasht, Foydat: Row.Foydat, Hujjatt: Row.Hujjatt, Izoht: Row.Izoht, Timet: Row.Timet, Usert: Row.Usert, Idselyamit: Row.Idselyamit})
+
+			}
+
+			tem.Execute(w, Row.Salom)
+
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+
+		}
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
+	}
+
+}
+
+func comchange(w http.ResponseWriter, r *http.Request) {
+	qwe := sessionManager.Keys(r.Context())
+
+	if len(qwe) == 1 {
+		msg := sessionManager.GetString(r.Context(), qwe[0])
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+		sorov := db.QueryRow(getuserval)
+		var name string
+
+		sorov.Scan(&name)
+
+		if name == msg && msg != "" {
+
+			tem, err := template.ParseFiles("template/comchange.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			var checkkod string
+			urlcode := r.URL.Path
+			urlcode = strings.ReplaceAll(urlcode, "/compensation/", "")
+			listurl := strings.Split(urlcode, "*")
+			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
+			kodval := db.QueryRow(kodlist)
+			kodval.Scan(&checkkod)
+
+			if r.FormValue("manzilc") != "" && listurl[0] == checkkod {
+
+				visionc := r.FormValue("visionc")
+				kodc := r.FormValue("kodc")
+				manzilc := r.FormValue("manzilc")
+				maydonc := r.FormValue("maydonc")
+				xonac := r.FormValue("xonac")
+				yermaydonc := r.FormValue("yermaydonc")
+				bozorc := r.FormValue("bozorc")
+				ijarac := r.FormValue("ijarac")
+				ijaramc := r.FormValue("ijaramc")
+				protokolc := r.FormValue("protokolc")
+				orderc := r.FormValue("orderc")
+
+				queryinsert := fmt.Sprintf(`UPDATE compensation 
+				SET kodimport = '%s', visionc = '%s', kodc = '%s', manzilc = '%s', maydonc = '%s', xonac = '%s', yermaydonc = '%s', bozorc = '%s', ijarac = '%s', ijaramc = '%s', protokolc = '%s', orderc = '%s', userc = '%s'
+				WHERE idc = '%s';`, listurl[0], visionc, kodc, manzilc, maydonc, xonac, yermaydonc, bozorc, ijarac, ijaramc, protokolc, orderc, name, listurl[3])
+
+				_, err = db.Exec(queryinsert)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+			}
+
+			querylike := fmt.Sprintf(`SELECT *
+		FROM
+		compensation
+		WHERE
+		idselyamic = '%s';`, listurl[1])
+
+			Row := new(Compensation)
+
+			rows, err := db.Query(querylike)
+			if err != nil {
+				fmt.Println(err)
+			}
+			for rows.Next() {
+				err = rows.Scan(&Row.Idc, &Row.Kodimport, &Row.Kodc, &Row.Manzilc, &Row.Maydonc, &Row.Xonac, &Row.Yermaydonc, &Row.Bozorc, &Row.Ijarac, &Row.Ijaramc, &Row.Protokolc, &Row.Orderc, &Row.Datac, &Row.Userc, &Row.Idselyamic)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				Row.Salom = append(Row.Salom, Compensation{Idc: Row.Idc, Kodimport: Row.Kodimport, Kodc: Row.Kodc, Manzilc: Row.Manzilc, Maydonc: Row.Maydonc, Xonac: Row.Xonac, Yermaydonc: Row.Yermaydonc, Bozorc: Row.Bozorc, Ijarac: Row.Ijarac, Ijaramc: Row.Ijaramc, Protokolc: Row.Protokolc, Orderc: Row.Orderc, Datac: Row.Datac, Userc: Row.Userc, Idselyamic: Row.Idselyamic})
 
 			}
 
