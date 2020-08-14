@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
+    <style>
+        table {
+            border: solid 1px rebeccapurple;
+            border-collapse: collapse;
+            
+        }
+        tr {
+            border: solid 1px;
+            padding: 5px;
+        }
+        td {
+            border: red solid 1px;
+            padding: 10px;
+            width: 50%;
+        }
+    </style>
 </head>
 <body>
     <form action="" method="POST">
@@ -16,5 +32,15 @@
         <input type="text" name="password" id="pass">
         <input type="submit" value="Create">
     </form>
+    {{range .}}
+        <table>
+            <tr>
+                <td>{{.Tel}}</td>
+                <td>{{.Useru}}</td>
+                <td>{{.Password}}</td>
+                <td>{{.Vaqt}}</td>
+            </tr>
+        </table>
+    {{end}}
 </body>
 </html>

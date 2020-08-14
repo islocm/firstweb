@@ -154,7 +154,7 @@ a:link {
 <body>
 <button><a href="/">Home</a></button>
 <button><a href="/information">Ma'lumotlar</a></button>
-<input type="reset" value="Обновит текст">
+<form action="" method="POST"><input type="password" name="update" ><input type="submit" value="Update"></form>
 <button class="open-button" onclick="openForm()">Состав Семьи</button>
 
 
@@ -167,18 +167,36 @@ a:link {
         <input type="text" name="relations" placeholder="Қариндошлик алоқаси" list="relation" value="О/Б">
         <datalist id="relation">
           <option value="О/Б" active>
-          <option value="аёли">
-          <option value="қизи">
-          <option value="ўғли">
-          <option value="келини">
-        </datalist>
+          <option value="Аёли">
+          <option value="Қизи">
+          <option value="Ўғли">
+          <option value="Келини">
+          <option value="Эри"></option> 
+          <option value="Куёви"></option> 
+          <option value="Набираси"></option> 
+          <option value="Отаси"></option> 
+          <option value="Онаси"></option> 
+          <option value="Бувиси"></option> 
+          <option value="Бобоси"></option> 
+          <option value="Акаси"></option> 
+          <option value="Опаси"></option> 
+          <option value="Синглиси"></option> 
+          <option value="Укаси"></option> 
+          <option value="Тоғаси"></option> 
+          <option value="Амакиси"></option> 
+          <option value="Холаси"></option> 
+          <option value="Аммаси"></option> 
+          <option value="Жияни"></option> 
+          <option value="Авараси"></option> 
+          <option value="Набира-келини"></option> 
+         </datalist>
         <input type="text" name="jons" placeholder="Жон боши">
-        <input type="text" name="manzils" placeholder="Бузилишга тушган манзил">
-        <input type="text" name="raqams" placeholder="Уй рақами">
+        
+        
         <input type="text" name="vaqts" placeholder="Рўйхатга қўйилган вақти">
-        <input type="text" name="yashashs" placeholder="Яшаш майдони">
-        <input type="text" name="foydas" placeholder="Фойдаланиш майдони">
-        <input type="text" name="hujjats" placeholder="Уй жойга тегишли хужжатлар">
+        
+        
+        
         <input type="text" name="izoh" placeholder="Изох">
 
     <button type="submit" class="btn">Save</button>
@@ -192,12 +210,10 @@ a:link {
     <th>Туғилган йили</th>
     <th>Қариндошлик алоқаси</th>
     <th>Жон боши</th>
-    <th>Бузилишга тушган манзил</th>
-    <th>Уй рақами</th>
+    
+    
     <th>Рўйхатга қўйилган вақти</th>
-    <th>Яшаш майдони</th>
-    <th>Фойдаланиш майдони</th>
-    <th>Уй жойга тегишли хужжатлар</th>
+    
     <th>Изох</th>
     <th>Вақти</th>
     <th>Фойдаланувчи</th>
@@ -212,12 +228,10 @@ a:link {
     <td>{{.Births}}</td>
     <td>{{.Relations}}</td>
     <td style="color: darkgrey;"><button class="butgo"><a class="linkgo" href="/selyami/{{.Kods}}/tarkib/{{.Ids}}">{{.Jons}}</a></button></td>
-    <td>{{.Manzils}}</td>
-    <td>{{.Raqams}}</td>
+    
+    
     <td>{{.Vaqts}}</td>
-    <td>{{.Yashashs}}</td>
-    <td>{{.Foydas}}</td>
-    <td>{{.Hujjats}}</td>
+    
     <td>{{.Izoh}}</td>
     <td>{{.Times}}</td>
     <td>{{.Users}}</td>

@@ -8,7 +8,6 @@
 body {
   background-color: #e9e9e9;
 }
-
 table {
   background-color: white;
   overflow: auto;
@@ -55,13 +54,12 @@ form {
 input[type=text] {
   padding-top: 15px;
   margin: 15px 0px;
-  
+  display: inline;
   border: none;
   border-bottom: 2px solid greenyellow;
   text-align: center;
   text-shadow: 1px 1px greenyellow;
   box-shadow: 5px 5px 4px grey;
-  width: 19%;
 }
 
 .inputgo {
@@ -96,91 +94,49 @@ a:hover, a:active {
 </style>
 </head>
 <body>
-  <a href="/">Home</a>
-  <a href="/information">Ma'lumotlar</a>
-  <a href="/zapros">So'rov</a>
- 
-
-    
-  <form action="" method="POST">
-    <label for="fiot"></label>
-    <input type="text" name="fiot" id="fiot" placeholder="Ф.И.О">
-    <label for="birtht"></label>
-    <input type="text" name="birtht" id="birtht" placeholder="Туғилган йили">
-    <label for="relationt"></label>
-    <input type="text" name="relationt" id="relationt" list="relation" placeholder="Қариндошлик алоқаси">
-    <datalist id="relation">
-      <option value="О/Б">
-      <option value="Аёли">
-        <option value="Қизи">
-        <option value="Ўғли">
-        <option value="Келини">
-        <option value="Эри"></option> 
-        <option value="Куёви"></option> 
-        <option value="Набираси"></option> 
-        <option value="Отаси"></option> 
-        <option value="Онаси"></option> 
-        <option value="Бувиси"></option> 
-        <option value="Бобоси"></option> 
-        <option value="Акаси"></option> 
-        <option value="Опаси"></option> 
-        <option value="Синглиси"></option> 
-        <option value="Укаси"></option> 
-        <option value="Тоғаси"></option> 
-        <option value="Амакиси"></option> 
-        <option value="Холаси"></option> 
-        <option value="Аммаси"></option> 
-        <option value="Жияни"></option> 
-        <option value="Авараси"></option> 
-        <option value="Набира-келини"></option> 
-    </datalist>
-    <!-- <label for="jont"></label>
-    <input class="inputgo" type="text" name="jont" id="jont" placeholder="Жон боши">
-    <label for="manzilt"></label>
-    <input type="text" name="manzilt" id="manzilt" placeholder="Бузилишга тушган манзил">
-    <label for="raqamt"></label>
-    <input type="text" name="raqamt" id="raqamt" placeholder="Уй рақами"> -->
-    <label for="vaqtt"></label>
-    <input type="text" name="vaqtt" id="vaqtt" placeholder="Рўйхатга қўйилган вақти">
-    <!-- <label for="yashasht"></label>
-    <input type="text" name="yashasht" id="yashasht" placeholder="Яшаш майдони">
-    <label for="foydat"></label>
-    <input type="text" name="foydat" id="foydat" placeholder="Фойдаланиш майдони">
-    <label for="hujjatt"></label>
-    <input type="text" name="hujjatt" id="hujjatt" placeholder="Уй жойга тегишли хужжат">
-    <label for="izoht"></label> -->
-    <input type="text" name="izoht" id="izoht" placeholder="Изох"><br>
-    <input class="buttongo" type="submit" value="Save">
-  </form>
-
+  
     <table>
         <tr>
-          <th>Т/р</th>
+            <th>Т/р</th>
+            <th>Бузилишга тушган манзил</th>
+            <th>Яшаш майдони</th>
+            <th>Фойдаланиш майдони</th>
+            <th>Жон боши</th>
+            <th>Уй жойга тегишли хужжатлар</th>
           <th>Ф.И.О</th>
           <th>Туғилган йили</th>
           <th>Қариндошлик алоқаси</th>
-          <th>Жон боши</th>
+         
+          
           
           <th>Рўйхатга қўйилган вақти</th>
          
+          
           <th>Изох</th>
           <th>Вақти</th>
           <th>Фойдаланувчи</th>
         </tr>
         {{range .}}
         <tr>
-          <td>{{.Idt}}</td>
+            <td>{{.Idt}}</td>
+         <td>{{.Manzilt}}</td>
+         <td>{{.Yashasht}}</td>
+          <td>{{.Foydat}}</td>
+          <td>{{.Jont}}</td>
+          <td>{{.Hujjatt}}</td>
+
           <td>{{.Fiot}}</td>
           <td>{{.Birtht}}</td>
           <td>{{.Relationt}}</td>
-          <td>{{.Jont}}</td>
+          
+          
           
           <td>{{.Vaqtt}}</td>
+          
           
           <td>{{.Izoht}}</td>
           <td>{{.Timet}}</td>
           <td>{{.Usert}}</td>
-          <td><a href="/selyami/{{.Kodt}}/tarkib/{{.Idselyamit}}/change/{{.Idt}}">Change</a></td>
         </tr>
         {{end}}
       </table>
