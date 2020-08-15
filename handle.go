@@ -16,8 +16,6 @@ import (
 func index(w http.ResponseWriter, r *http.Request) {
 
 	switch {
-	case rNum.MatchString(r.URL.Path):
-		digits(w, r)
 	case rChange.MatchString(r.URL.Path):
 		changego(w, r)
 	case rTarkib.MatchString(r.URL.Path):
@@ -466,150 +464,156 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 func hidedb(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Database hidding query"))
 	_, err := db.Exec(`CREATE TABLE "kadastr" (
-	"mulk" varchar(255),
-	"kod" varchar(255),
-	"mahalla" varchar(255),
-	"egalik" varchar(255),
-	"pasport" varchar(255),
-	"hujjat" varchar(255),
-	"regkitob" varchar(50),
-	"kitobbet" varchar(50),
-	"gosraqam" varchar(50),
-	"sananomer" varchar(50),
-	"miqdor" varchar(50),
-	"xona" varchar(50),
-	"sf" varchar(50),
-	"sv" varchar(50),
-	"po" varchar(50),
-	"pj" varchar(50),
-	"pp" varchar(50),
-	"pzuo" varchar(50),
-	"pzuz" varchar(50),
-	"pzuzaxvat" varchar(50),
-	"pzupd" varchar(50),
-	"pzupp" varchar(50),
-	"npp" varchar(50),
-	"npk" varchar(50),
-	"spp" varchar(50),
-	"spk" varchar(50)
-) WITH (
-  OIDS=FALSE
-);
-
-
-
-CREATE TABLE "import" (
-	"idi" serial,
-	"mulk" varchar(255),
-	"kod" varchar(255),
-	"mahalla" varchar(255),
-	"egalik" varchar(255),
-	"pasport" varchar(255),
-	"hujjat" varchar(255),
-	"regkitob" varchar(50),
-	"kitobbet" varchar(50),
-	"gosraqam" varchar(50),
-	"sananomer" varchar(50),
-	"miqdor" varchar(50),
-	"xona" varchar(50),
-	"sf" varchar(50),
-	"sv" varchar(50),
-	"po" varchar(50),
-	"pj" varchar(50),
-	"pp" varchar(50),
-	"pzuo" varchar(50),
-	"pzuz" varchar(50),
-	"pzuzaxvat" varchar(50),
-	"pzupd" varchar(50),
-	"pzupp" varchar(50),
-	"npp" varchar(50),
-	"npk" varchar(50),
-	"spp" varchar(50),
-	"spk" varchar(50),
-	"datei" TIMESTAMP DEFAULT current_timestamp,
-	"useri" varchar(50),
-	CONSTRAINT "import_pk" PRIMARY KEY ("kod")
-) WITH (
-  OIDS=FALSE
-);
-
-
-
-CREATE TABLE "Selyami" (
-	"ids" serial,
-	"tumans" varchar(255),
-	"kods" varchar(255) NOT NULL,
-	"kompensatsiyas" varchar(255),
-	"sostavs" integer,
-	"huquqs" varchar(255),
-	"xonas" varchar(255),
-	"Izoh" TEXT,
-	"times" TIMESTAMP DEFAULT current_timestamp,
-	"users" varchar(50) NOT NULL,
-	CONSTRAINT "Selyami_pk" PRIMARY KEY ("kods")
-) WITH (
-  OIDS=FALSE
-);
-
-
-
-CREATE TABLE "users" (
-	"tel" varchar(14),
-	"user" varchar(50) NOT NULL,
-	"password" varchar(30) NOT NULL,
-	CONSTRAINT "users_pk" PRIMARY KEY ("user")
-) WITH (
-  OIDS=FALSE
-);
-
-
-
-CREATE TABLE "compensation" (
-	"datac" TIMESTAMP DEFAULT current_timestamp,
-	"kodc" varchar(255),
-	"oilac" varchar(255),
-	"jonc" varchar(255),
-	"visionc" varchar(255),
-	"manzilc" varchar(255),
-	"xonac" varchar(255),
-	"maydon" varchar(255),
-	"arenda" varchar(255),
-	"protokolc" varchar(255),
-	"qarorc" varchar(255),
-	"orderc" varchar(255)
-) WITH (
-  OIDS=FALSE
-);
-
-
-
-CREATE TABLE "selyamioila" (
-	"idso" serial,
-	"kodso" varchar(255),
-	"kompensatsiyaso" varchar(255),
-	"sostavso" varchar(255),
-	"huquqso" varchar(255),
-	"xonaso" varchar(255),
-	"timeso" TIMESTAMP DEFAULT current_timestamp,
-	"userso" varchar(50)
-) WITH (
-  OIDS=FALSE
-);
-
-
-
-
-ALTER TABLE "import" ADD CONSTRAINT "import_fk0" FOREIGN KEY ("useri") REFERENCES "users"("user");
-
-ALTER TABLE "Selyami" ADD CONSTRAINT "Selyami_fk0" FOREIGN KEY ("users") REFERENCES "users"("user");
-
-
-ALTER TABLE "compensation" ADD CONSTRAINT "compensation_fk0" FOREIGN KEY ("kodc") REFERENCES "Selyami"("kods");
-
-ALTER TABLE "selyamioila" ADD CONSTRAINT "selyamioila_fk0" FOREIGN KEY ("kodso") REFERENCES "Selyami"("kods");
-ALTER TABLE "selyamioila" ADD CONSTRAINT "selyamioila_fk1" FOREIGN KEY ("userso") REFERENCES "users"("user");
-
-`)
+		"mulk" varchar(255),
+		"kod" varchar(255),
+		"mahalla" varchar(255),
+		"egalik" varchar(255),
+		"pasport" varchar(255),
+		"hujjat" varchar(255),
+		"regkitob" varchar(50),
+		"kitobbet" varchar(50),
+		"gosraqam" varchar(50),
+		"sananomer" varchar(50),
+		"miqdor" varchar(50),
+		"xona" varchar(50),
+		"sf" varchar(50),
+		"sv" varchar(50),
+		"po" varchar(50),
+		"pj" varchar(50),
+		"pp" varchar(50),
+		"pzuo" varchar(50),
+		"pzuz" varchar(50),
+		"pzuzaxvat" varchar(50),
+		"pzupd" varchar(50),
+		"pzupp" varchar(50),
+		"npp" varchar(50),
+		"npk" varchar(50),
+		"spp" varchar(50),
+		"spk" varchar(50)
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	CREATE TABLE "import" (
+		"id" serial,
+		"qaror" varchar(50),
+		"tuman" varchar(50),
+		"mahalla" varchar(255),
+		"kod" varchar(255),
+		"nedvijimost" varchar(255),
+		"pravoobladatel" varchar(255),
+		"soprovoditelniy" varchar(255),
+		"pzuo" varchar(50),
+		"po" varchar(50),
+		"pj" varchar(50),
+		"xona" varchar(50),
+		"datei" TIMESTAMP DEFAULT current_timestamp,
+		"useri" varchar(50),
+		CONSTRAINT "import_pk" PRIMARY KEY ("kod")
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	CREATE TABLE "selyami" (
+		"ids" serial,
+		"fios" varchar(255),
+		"kods" varchar(255) NOT NULL,
+		"births" varchar(255),
+		"relations" varchar(255),
+		"jons" varchar(255),
+		"manzils" varchar(255),
+		"raqams" varchar(255),
+		"vaqts" varchar(255),
+		"yashashs" varchar(255),
+		"foydas" varchar(255),
+		"hujjats" varchar(255),
+		"izoh" TEXT,
+		"times" TIMESTAMP DEFAULT current_timestamp,
+		"users" varchar(50) NOT NULL,
+		CONSTRAINT "selyami_pk" PRIMARY KEY ("ids")
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	CREATE TABLE "users" (
+		"tel" varchar(14),
+		"useru" varchar(50) NOT NULL,
+		"password" varchar(30) NOT NULL,
+		"dateu" TIMESTAMP NOT NULL DEFAULT current_timestamp,
+		CONSTRAINT "users_pk" PRIMARY KEY ("useru")
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	CREATE TABLE "compensation" (
+		"idc" serial NOT NULL,
+		"kodimport" varchar(255),
+		"visionc" varchar(255),
+		"kodc" varchar(255) NOT NULL,
+		"manzilc" varchar(255),
+		"maydonc" varchar(255),
+		"xonac" varchar(255),
+		"yermaydonc" varchar(255),
+		"bozorc" varchar(255),
+		"ijarac" varchar(255),
+		"ijaramc" varchar(255),
+		"protokolc" varchar(255),
+		"orderc" varchar(255),
+		"datac" TIMESTAMP DEFAULT current_timestamp,
+		"userc" varchar(255),
+		"idselyamic" int NOT NULL
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	CREATE TABLE "tarkib" (
+		"idt" serial,
+		"fiot" varchar(255),
+		"kodt" varchar(255) NOT NULL,
+		"birtht" varchar(255),
+		"relationt" varchar(255),
+		"jont" varchar(255),
+		"manzilt" varchar(255),
+		"raqamt" varchar(255),
+		"vaqtt" varchar(255),
+		"yashasht" varchar(255),
+		"foydat" varchar(255),
+		"hujjatt" varchar(255),
+		"izoht" TEXT,
+		"timet" TIMESTAMP DEFAULT current_timestamp,
+		"usert" varchar(50) NOT NULL,
+		"idselyamit" int NOT NULL
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	
+	ALTER TABLE "import" ADD CONSTRAINT "import_fk0" FOREIGN KEY ("useri") REFERENCES "users"("useru");
+	
+	ALTER TABLE "selyami" ADD CONSTRAINT "selyami_fk0" FOREIGN KEY ("kods") REFERENCES "import"("kod");
+	ALTER TABLE "selyami" ADD CONSTRAINT "selyami_fk1" FOREIGN KEY ("users") REFERENCES "users"("useru");
+	
+	
+	ALTER TABLE "compensation" ADD CONSTRAINT "compensation_fk0" FOREIGN KEY ("kodimport") REFERENCES "import"("kod");
+	ALTER TABLE "compensation" ADD CONSTRAINT "compensation_fk1" FOREIGN KEY ("userc") REFERENCES "users"("useru");
+	ALTER TABLE "compensation" ADD CONSTRAINT "compensation_fk2" FOREIGN KEY ("idselyamic") REFERENCES "selyami"("ids");
+	
+	ALTER TABLE "tarkib" ADD CONSTRAINT "tarkib_fk0" FOREIGN KEY ("kodt") REFERENCES "import"("kod");
+	ALTER TABLE "tarkib" ADD CONSTRAINT "tarkib_fk1" FOREIGN KEY ("usert") REFERENCES "users"("useru");
+	ALTER TABLE "tarkib" ADD CONSTRAINT "tarkib_fk2" FOREIGN KEY ("idselyamit") REFERENCES "selyami"("ids");
+	`)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -1523,7 +1527,7 @@ func changego(w http.ResponseWriter, r *http.Request) {
 					}
 					queryinsert2 := fmt.Sprintf(`UPDATE selyami 
 			SET fios = '%s', kods = '%s', births = '%s', relations = '%s', jons = '%s', manzils = '%s', raqams = '%s', vaqts = '%s', yashashs = '%s',
-			foydas = '%s', hujjats = '%s', izohs = '%s', users = '%s'
+			foydas = '%s', hujjats = '%s', izoh = '%s', users = '%s'
 			WHERE ids = '%s';`, fiot, listurl[0], birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, name, listurl[2])
 					_, err = db.Exec(queryinsert2)
 					if err != nil {
@@ -1611,6 +1615,7 @@ type Compensation struct {
 }
 
 func compensation(w http.ResponseWriter, r *http.Request) {
+
 	qwe := sessionManager.Keys(r.Context())
 
 	if len(qwe) == 1 {
@@ -1674,12 +1679,12 @@ func compensation(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 			}
 			for rows.Next() {
-				err = rows.Scan(&Row.Idc, &Row.Kodimport, &Row.Kodc, &Row.Manzilc, &Row.Maydonc, &Row.Xonac, &Row.Yermaydonc, &Row.Bozorc, &Row.Ijarac, &Row.Ijaramc, &Row.Protokolc, &Row.Orderc, &Row.Datac, &Row.Userc, &Row.Idselyamic)
+				err = rows.Scan(&Row.Idc, &Row.Kodimport, &Row.Visionc, &Row.Kodc, &Row.Manzilc, &Row.Maydonc, &Row.Xonac, &Row.Yermaydonc, &Row.Bozorc, &Row.Ijarac, &Row.Ijaramc, &Row.Protokolc, &Row.Orderc, &Row.Datac, &Row.Userc, &Row.Idselyamic)
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
-				Row.Salom = append(Row.Salom, Compensation{Idc: Row.Idc, Kodimport: Row.Kodimport, Kodc: Row.Kodc, Manzilc: Row.Manzilc, Maydonc: Row.Maydonc, Xonac: Row.Xonac, Yermaydonc: Row.Yermaydonc, Bozorc: Row.Bozorc, Ijarac: Row.Ijarac, Ijaramc: Row.Ijaramc, Protokolc: Row.Protokolc, Orderc: Row.Orderc, Datac: Row.Datac, Userc: Row.Userc, Idselyamic: Row.Idselyamic})
+				Row.Salom = append(Row.Salom, Compensation{Idc: Row.Idc, Kodimport: Row.Kodimport, Visionc: Row.Visionc, Kodc: Row.Kodc, Manzilc: Row.Manzilc, Maydonc: Row.Maydonc, Xonac: Row.Xonac, Yermaydonc: Row.Yermaydonc, Bozorc: Row.Bozorc, Ijarac: Row.Ijarac, Ijaramc: Row.Ijaramc, Protokolc: Row.Protokolc, Orderc: Row.Orderc, Datac: Row.Datac, Userc: Row.Userc, Idselyamic: Row.Idselyamic})
 
 			}
 
@@ -1770,6 +1775,7 @@ func zaprost(w http.ResponseWriter, r *http.Request) {
 }
 
 func comchange(w http.ResponseWriter, r *http.Request) {
+
 	qwe := sessionManager.Keys(r.Context())
 
 	if len(qwe) == 1 {
@@ -1790,6 +1796,7 @@ func comchange(w http.ResponseWriter, r *http.Request) {
 			var checkkod string
 			urlcode := r.URL.Path
 			urlcode = strings.ReplaceAll(urlcode, "/compensation/", "")
+
 			listurl := strings.Split(urlcode, "*")
 			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
 			kodval := db.QueryRow(kodlist)
@@ -1834,12 +1841,12 @@ func comchange(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 			}
 			for rows.Next() {
-				err = rows.Scan(&Row.Idc, &Row.Kodimport, &Row.Kodc, &Row.Manzilc, &Row.Maydonc, &Row.Xonac, &Row.Yermaydonc, &Row.Bozorc, &Row.Ijarac, &Row.Ijaramc, &Row.Protokolc, &Row.Orderc, &Row.Datac, &Row.Userc, &Row.Idselyamic)
+				err = rows.Scan(&Row.Idc, &Row.Kodimport, &Row.Visionc, &Row.Kodc, &Row.Manzilc, &Row.Maydonc, &Row.Xonac, &Row.Yermaydonc, &Row.Bozorc, &Row.Ijarac, &Row.Ijaramc, &Row.Protokolc, &Row.Orderc, &Row.Datac, &Row.Userc, &Row.Idselyamic)
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
-				Row.Salom = append(Row.Salom, Compensation{Idc: Row.Idc, Kodimport: Row.Kodimport, Kodc: Row.Kodc, Manzilc: Row.Manzilc, Maydonc: Row.Maydonc, Xonac: Row.Xonac, Yermaydonc: Row.Yermaydonc, Bozorc: Row.Bozorc, Ijarac: Row.Ijarac, Ijaramc: Row.Ijaramc, Protokolc: Row.Protokolc, Orderc: Row.Orderc, Datac: Row.Datac, Userc: Row.Userc, Idselyamic: Row.Idselyamic})
+				Row.Salom = append(Row.Salom, Compensation{Idc: Row.Idc, Kodimport: Row.Kodimport, Visionc: Row.Visionc, Kodc: Row.Kodc, Manzilc: Row.Manzilc, Maydonc: Row.Maydonc, Xonac: Row.Xonac, Yermaydonc: Row.Yermaydonc, Bozorc: Row.Bozorc, Ijarac: Row.Ijarac, Ijaramc: Row.Ijaramc, Protokolc: Row.Protokolc, Orderc: Row.Orderc, Datac: Row.Datac, Userc: Row.Userc, Idselyamic: Row.Idselyamic})
 
 			}
 

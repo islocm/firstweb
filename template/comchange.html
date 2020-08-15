@@ -6,7 +6,7 @@
     <title >Состав семьи</title>
 <style>
 body {
-  background-color: #525155;
+  background-color: #a7a0bd;
 }
 table {
   background-color: white;
@@ -100,6 +100,7 @@ a:hover, a:active {
 
     
   <form action="" method="POST">
+    {{range .}}
     <label for="relationt"></label>
     <input type="text" name="visionc" id="relationt" list="relation" placeholder="Turi" value="{{.Visionc}}" >
     <datalist id="relation">
@@ -131,6 +132,7 @@ a:hover, a:active {
     <input type="text" name="protokolc" id="hujjatt" placeholder="Protokol" value="{{.Protokolc}}" >
     <label for="izoht"></label>
     <input type="text" name="orderc" id="izoht" placeholder="Изох" value="{{.Orderc}}" ><br>
+    {{end}}
     <input class="buttongo" type="submit" value="Save">
   </form>
 

@@ -17,12 +17,13 @@ type Name struct {
 }
 
 var sessionManager *scs.SessionManager
-var rNum = regexp.MustCompile(`/d`)              // Has digit(s)
-var rAbc = regexp.MustCompile(`selyami`)         // Contains "abc"
-var rTarkib = regexp.MustCompile(`tarkib`)       // Contains "abc"
-var rChange = regexp.MustCompile(`change`)       // Contains "abc"
-var rCom = regexp.MustCompile(`compensation`)    // Contains "abc"
-var rComchange = regexp.MustCompile(`comchange`) // Contains "abc"
+
+// var rNum = regexp.MustCompile(`/d`)              // Has digit(s)
+var rAbc = regexp.MustCompile(`selyami`)       // Contains "abc"
+var rTarkib = regexp.MustCompile(`tarkib`)     // Contains "abc"
+var rChange = regexp.MustCompile(`change`)     // Contains "abc"
+var rCom = regexp.MustCompile(`compensation`)  // Contains "abc"
+var rComchange = regexp.MustCompile(`comedit`) // Contains "abc"
 
 func main() {
 	e := connection()
@@ -47,5 +48,5 @@ func main() {
 	mux.HandleFunc("/importsel", authBasic(selyamiexcel))
 	mux.HandleFunc("/zapros", authBasic(zaprost))
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
-	http.ListenAndServe(":3030", sessionManager.LoadAndSave(mux))
+	http.ListenAndServe("85.208.186.208:80", sessionManager.LoadAndSave(mux))
 }
