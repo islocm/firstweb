@@ -13,13 +13,58 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
+// Copyt qwe
+type Copyt struct {
+	Idt        string
+	Fiot       string
+	Kodt       string
+	Birtht     string
+	Relationt  string
+	Jont       string
+	Manzilt    string
+	Raqamt     string
+	Vaqtt      string
+	Yashasht   string
+	Foydat     string
+	Hujjatt    string
+	Izoht      string
+	Timet      string
+	Usert      string
+	Idselyamit string
+}
+
+// Copys qwe
+type Copys struct {
+	Ids       string
+	Fios      string
+	Kods      string
+	Births    string
+	Relations string
+	Jons      string
+	Manzils   string
+	Raqams    string
+	Vaqts     string
+	Yashashs  string
+	Foydas    string
+	Hujjats   string
+	Izoh      string
+	Times     string
+	Users     string
+}
+
 func index(w http.ResponseWriter, r *http.Request) {
 
 	switch {
+	case rDelete.MatchString(r.URL.Path):
+		delete(w, r)
 	case rChange.MatchString(r.URL.Path):
 		changego(w, r)
+	case rClean.MatchString(r.URL.Path):
+		cleango(w, r)
 	case rTarkib.MatchString(r.URL.Path):
 		tarkiblink(w, r)
+	case rChop.MatchString(r.URL.Path):
+		chop(w, r)
 	case rAbc.MatchString(r.URL.Path):
 		selyamilink(w, r)
 	case rComchange.MatchString(r.URL.Path):
@@ -346,71 +391,86 @@ func datab(w http.ResponseWriter, r *http.Request) {
 }
 
 func wrexcel(w http.ResponseWriter, r *http.Request) {
+	qwe := sessionManager.Keys(r.Context())
+	if len(qwe) == 1 {
+		msg := sessionManager.GetString(r.Context(), "islocm")
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+		sorov := db.QueryRow(getuserval)
+		var name string
 
-	if r.Method == "GET" {
-		tem, err := template.ParseFiles("template/excel.html")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		sorov.Scan(&name)
 
-		tem.Execute(w, nil)
-	} else {
+		if name == msg && msg != "" {
 
-		body := &bytes.Buffer{}
-		writer := multipart.NewWriter(body)
+			if r.Method == "GET" {
+				tem, err := template.ParseFiles("template/excel.html")
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 
-		r.Header.Add("Content-Type", writer.FormDataContentType())
-		r.ParseMultipartForm(32 << 20)
-		file, header, err := r.FormFile("exwork")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+				tem.Execute(w, nil)
+			} else {
 
-		f, err := os.OpenFile("./"+header.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+				body := &bytes.Buffer{}
+				writer := multipart.NewWriter(body)
 
-		io.Copy(f, file)
+				r.Header.Add("Content-Type", writer.FormDataContentType())
+				r.ParseMultipartForm(32 << 20)
+				file, header, err := r.FormFile("exwork")
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 
-		exfile, err := excelize.OpenFile(header.Filename)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		getsheet := exfile.GetSheetList()
+				f, err := os.OpenFile("./"+header.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 
-		rows, err := exfile.GetRows(getsheet[0])
+				io.Copy(f, file)
 
-		defer os.Remove(header.Filename)
-		defer f.Close()
-		defer file.Close()
+				exfile, err := excelize.OpenFile(header.Filename)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				getsheet := exfile.GetSheetList()
 
-		for _, row := range rows {
-			var dbval []string
-			getinfo, err := db.Query(`select kod from kadastr`)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			for getinfo.Next() {
-				var asval string
-				getinfo.Scan(&asval)
-				dbval = append(dbval, asval)
+				rows, err := exfile.GetRows(getsheet[0])
 
-			}
+				defer os.Remove(header.Filename)
+				defer f.Close()
+				defer file.Close()
 
-			if dbval != nil {
-				for lentarget, valtarget := range dbval {
+				for _, row := range rows {
+					row[0] = strings.ReplaceAll(row[0], "‘", "")
+					row[3] = strings.ReplaceAll(row[3], "‘", "")
+					row[4] = strings.ReplaceAll(row[4], "‘", "")
+					row[0] = strings.ReplaceAll(row[0], "'", "")
+					row[3] = strings.ReplaceAll(row[3], "`", "")
+					var dbval []string
+					getinfo, err := db.Query(`select kod from kadastr`)
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+					for getinfo.Next() {
+						var asval string
+						getinfo.Scan(&asval)
+						dbval = append(dbval, asval)
 
-					if valtarget == row[1] {
-						row[3] = strings.ReplaceAll(row[3], "'", "")
-						row[4] = strings.ReplaceAll(row[4], "'", "")
+					}
 
-						dbsorov := fmt.Sprintf(`UPDATE kadastr
+					if dbval != nil {
+						for lentarget, valtarget := range dbval {
+
+							if valtarget == row[1] {
+								row[3] = strings.ReplaceAll(row[3], "'", "")
+								row[4] = strings.ReplaceAll(row[4], "'", "")
+
+								dbsorov := fmt.Sprintf(`UPDATE kadastr
 					SET mulk = '%s', mahalla = '%s', egalik= '%s', pasport = '%s', hujjat = '%s',
 					regkitob = '%s', kitobbet = '%s', gosraqam = '%s', sananomer = '%s', miqdor = '%s', xona = '%s', sf = '%s',
 					sv = '%s', po = '%s', pj = '%s', pp = '%s', pzuo = '%s', pzuz = '%s',
@@ -418,22 +478,35 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 					npk = '%s', spp = '%s', spk = '%s'
 					WHERE kod = '%s';`, row[0], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25], valtarget)
 
-						_, err = db.Exec(dbsorov)
-						if err != nil {
-							fmt.Println(err.Error())
-							return
+								_, err = db.Exec(dbsorov)
+								if err != nil {
+									fmt.Println(err.Error())
+									return
 
-						}
+								}
 
-						break
+								break
 
-					} else if len(dbval)-1 == lentarget {
-						row[3] = strings.ReplaceAll(row[3], "'", "")
-						row[4] = strings.ReplaceAll(row[4], "'", "")
+							} else if len(dbval)-1 == lentarget {
+								row[3] = strings.ReplaceAll(row[3], "'", "")
+								row[4] = strings.ReplaceAll(row[4], "'", "")
 
-						dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
+								dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
 				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
 
+								_, err = db.Exec(dbsorov1)
+								if err != nil {
+									fmt.Println(err)
+									return
+
+								}
+
+							}
+
+						}
+					} else {
+						dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
+				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
 						_, err = db.Exec(dbsorov1)
 						if err != nil {
 							fmt.Println(err)
@@ -444,20 +517,23 @@ func wrexcel(w http.ResponseWriter, r *http.Request) {
 					}
 
 				}
-			} else {
-				dbsorov1 := fmt.Sprintf(`INSERT INTO kadastr (mulk, kod, mahalla, egalik, pasport, hujjat, regkitob, kitobbet, gosraqam, sananomer, miqdor, xona, sf, sv, po, pj, pp, pzuo, pzuz, pzuzaxvat, pzupd, pzupp, npp, npk, spp, spk)
-				VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25])
-				_, err = db.Exec(dbsorov1)
-				if err != nil {
-					fmt.Println(err)
-					return
-
-				}
 
 			}
-
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
 		}
-
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
 	}
 }
 
@@ -569,7 +645,8 @@ func hidedb(w http.ResponseWriter, r *http.Request) {
 		"orderc" varchar(255),
 		"datac" TIMESTAMP DEFAULT current_timestamp,
 		"userc" varchar(255),
-		"idselyamic" int NOT NULL
+		"idselyamic" int NOT NULL,
+		CONSTRAINT "compensation_pk" PRIMARY KEY ("idc")
 	) WITH (
 	  OIDS=FALSE
 	);
@@ -599,6 +676,81 @@ func hidedb(w http.ResponseWriter, r *http.Request) {
 	
 	
 	
+	CREATE TABLE "copys" (
+		"statuss" varchar(50),
+		"ids" varchar(255),
+		"fios" varchar(255),
+		"kods" varchar(255),
+		"births" varchar(255),
+		"relations" varchar(255),
+		"jons" varchar(255),
+		"manzils" varchar(255),
+		"raqams" varchar(255),
+		"vaqts" varchar(255),
+		"yashashs" varchar(255),
+		"foydas" varchar(255),
+		"hujjats" varchar(255),
+		"izoh" TEXT,
+		"times" varchar(255),
+		"users" varchar(50),
+		"timesc" TIMESTAMP DEFAULT current_timestamp,
+		"usersc" varchar(50)
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	CREATE TABLE "copyt" (
+		"statust" varchar(50),
+		"idt" varchar(255),
+		"fiot" varchar(255),
+		"kodt" varchar(255),
+		"birtht" varchar(255),
+		"relationt" varchar(255),
+		"jont" varchar(255),
+		"manzilt" varchar(255),
+		"raqamt" varchar(255),
+		"vaqtt" varchar(255),
+		"yashasht" varchar(255),
+		"foydat" varchar(255),
+		"hujjatt" varchar(255),
+		"izoht" TEXT,
+		"timet" varchar(255),
+		"usert" varchar(50),
+		"idselyamit" varchar(50),
+		"timetc" TIMESTAMP DEFAULT current_timestamp,
+		"usertc" varchar(50)
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
+	CREATE TABLE "copyi" (
+		"statusi" varchar(255),
+		"id" varchar(50),
+		"qaror" varchar(50),
+		"tuman" varchar(50),
+		"mahalla" varchar(255),
+		"kod" varchar(255),
+		"nedvijimost" varchar(255),
+		"pravoobladatel" varchar(255),
+		"soprovoditelniy" varchar(255),
+		"pzuo" varchar(50),
+		"po" varchar(50),
+		"pj" varchar(50),
+		"xona" varchar(50),
+		"datei" varchar(255),
+		"useri" varchar(50),
+		"dateic" TIMESTAMP DEFAULT current_timestamp,
+		"useric" varchar(255)
+	) WITH (
+	  OIDS=FALSE
+	);
+	
+	
+	
 	
 	ALTER TABLE "import" ADD CONSTRAINT "import_fk0" FOREIGN KEY ("useri") REFERENCES "users"("useru");
 	
@@ -612,7 +764,7 @@ func hidedb(w http.ResponseWriter, r *http.Request) {
 	
 	ALTER TABLE "tarkib" ADD CONSTRAINT "tarkib_fk0" FOREIGN KEY ("kodt") REFERENCES "import"("kod");
 	ALTER TABLE "tarkib" ADD CONSTRAINT "tarkib_fk1" FOREIGN KEY ("usert") REFERENCES "users"("useru");
-	ALTER TABLE "tarkib" ADD CONSTRAINT "tarkib_fk2" FOREIGN KEY ("idselyamit") REFERENCES "selyami"("ids");
+	ALTER TABLE "tarkib" ADD CONSTRAINT "tarkib_fk2" FOREIGN KEY ("idselyamit") REFERENCES "selyami"("ids");	
 	`)
 	if err != nil {
 		fmt.Println(err)
@@ -779,6 +931,7 @@ type Import struct {
 // }
 
 func info(w http.ResponseWriter, r *http.Request) {
+
 	qwe := sessionManager.Keys(r.Context())
 	if len(qwe) == 1 {
 		msg := sessionManager.GetString(r.Context(), qwe[0])
@@ -799,8 +952,12 @@ func info(w http.ResponseWriter, r *http.Request) {
 			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, r.FormValue("kod"))
 			kodval := db.QueryRow(kodlist)
 			kodval.Scan(&checkkod)
+			var checkkod1 string
+			kodlist1 := fmt.Sprintf(`select kod from import where kod = '%s';`, r.FormValue("checkgo"))
+			kodval1 := db.QueryRow(kodlist1)
+			kodval1.Scan(&checkkod1)
 
-			if r.FormValue("kod") != "" && r.FormValue("kod") != checkkod {
+			if r.FormValue("check") != "on" && r.FormValue("kod") != checkkod {
 				qaror := r.FormValue("qaror")
 				tuman := r.FormValue("tuman")
 				mahalla := r.FormValue("mahalla")
@@ -812,8 +969,12 @@ func info(w http.ResponseWriter, r *http.Request) {
 				po := r.FormValue("po")
 				pj := r.FormValue("pj")
 				xona := r.FormValue("xona")
+				nedvijimost = strings.ReplaceAll(nedvijimost, "'", "")
+				pravoobladatel = strings.ReplaceAll(pravoobladatel, "'", "")
+				pravoobladatel = strings.ReplaceAll(pravoobladatel, "‘", "")
+				soprovoditelniy = strings.ReplaceAll(soprovoditelniy, "'", "")
 				queryinsert := fmt.Sprintf(`insert into import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
-			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, name)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, name)
 
 				_, err = db.Exec(queryinsert)
 				if err != nil {
@@ -822,6 +983,51 @@ func info(w http.ResponseWriter, r *http.Request) {
 				}
 
 			}
+
+			if r.FormValue("check") == "on" && r.FormValue("checkgo") == checkkod1 {
+
+				qaror := r.FormValue("qaror")
+				tuman := r.FormValue("tuman")
+				mahalla := r.FormValue("mahalla")
+				kod := r.FormValue("kod")
+				nedvijimost := r.FormValue("nedvijimost")
+				pravoobladatel := r.FormValue("pravoobladatel")
+				soprovoditelniy := r.FormValue("soprovoditelniy")
+				pzuo := r.FormValue("pzuo")
+				po := r.FormValue("po")
+				pj := r.FormValue("pj")
+				xona := r.FormValue("xona")
+				check := r.FormValue("checkgo")
+
+				queryinsert := fmt.Sprintf(`update import 
+				SET qaror = '%s', tuman = '%s', mahalla = '%s', kod = '%s', nedvijimost = '%s', pravoobladatel = '%s', soprovoditelniy = '%s', pzuo = '%s', po = '%s', pj = '%s', xona = '%s', useri = '%s'
+				WHERE kod = '%s';`, qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, name, check)
+
+				_, err = db.Exec(queryinsert)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				queryinsert1 := fmt.Sprintf(`update selyami set kods = '%s' where kods = '%s'`, kod, check)
+				_, err = db.Exec(queryinsert1)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				queryinsert2 := fmt.Sprintf(`update tarkib set kodt = '%s' where kodt = '%s'`, kod, check)
+				_, err = db.Exec(queryinsert2)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				queryinsert3 := fmt.Sprintf(`update compensation set kodc = '%s' where kodc = '%s'`, kod, check)
+				_, err = db.Exec(queryinsert3)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			}
+
 			getval := r.FormValue("getinfo")
 			symval := "%"
 
@@ -918,18 +1124,18 @@ func info(w http.ResponseWriter, r *http.Request) {
 }
 
 func element(w http.ResponseWriter, r *http.Request) {
+
 	qwe := sessionManager.Keys(r.Context())
 	if len(qwe) == 1 {
-		msg := sessionManager.GetString(r.Context(), qwe[0])
+		msg := sessionManager.GetString(r.Context(), "islocm")
 		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
 		sorov := db.QueryRow(getuserval)
 		var name string
 
 		sorov.Scan(&name)
-		fmt.Println(name)
-		fmt.Println(msg)
+
 		if name == msg && msg != "" {
-			fmt.Println("exwork")
+
 			if r.Method == "GET" {
 				tem, err := template.ParseFiles("template/element.html")
 				if err != nil {
@@ -939,7 +1145,8 @@ func element(w http.ResponseWriter, r *http.Request) {
 
 				tem.Execute(w, nil)
 			} else {
-				fmt.Println("nmadir")
+				defer http.Redirect(w, r, "/information", 307)
+
 				body := &bytes.Buffer{}
 				writer := multipart.NewWriter(body)
 
@@ -965,17 +1172,27 @@ func element(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				getsheet := exfile.GetSheetList()
-				fmt.Println("hato")
+
 				exfile.GetRows(getsheet[0])
 				defer os.Remove(header.Filename)
 				defer f.Close()
 				defer file.Close()
 				rows, err := exfile.GetRows(getsheet[0])
 				length := len(rows[0])
-				fmt.Println(length)
 
 				if length == 11 {
 					for _, row := range rows {
+						row[3] = strings.ReplaceAll(row[3], "	", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
+						row[3] = strings.ReplaceAll(row[3], " ", "")
 						var dbval []string
 						getinfo, err := db.Query(`select kod from import`)
 						if err != nil {
@@ -993,7 +1210,14 @@ func element(w http.ResponseWriter, r *http.Request) {
 							for lentarget, valtarget := range dbval {
 
 								if valtarget == row[3] {
+									row[1] = strings.ReplaceAll(row[1], "'", "")
+									row[2] = strings.ReplaceAll(row[2], "'", "")
+									row[3] = strings.ReplaceAll(row[3], "'", "")
+									row[4] = strings.ReplaceAll(row[4], "'", "")
+
+									row[5] = strings.ReplaceAll(row[5], "‘", "")
 									row[5] = strings.ReplaceAll(row[5], "'", "")
+									row[6] = strings.ReplaceAll(row[6], "‘", "")
 									row[6] = strings.ReplaceAll(row[6], "'", "")
 
 									dbsorov := fmt.Sprintf(`UPDATE import
@@ -1004,6 +1228,7 @@ func element(w http.ResponseWriter, r *http.Request) {
 									_, err = db.Exec(dbsorov)
 									if err != nil {
 										fmt.Println(err.Error())
+										fmt.Println(row)
 										return
 
 									}
@@ -1011,7 +1236,13 @@ func element(w http.ResponseWriter, r *http.Request) {
 									break
 
 								} else if len(dbval)-1 == lentarget {
+									row[1] = strings.ReplaceAll(row[1], "'", "")
+									row[2] = strings.ReplaceAll(row[2], "'", "")
+									row[3] = strings.ReplaceAll(row[3], "'", "")
+									row[4] = strings.ReplaceAll(row[4], "'", "")
+									row[5] = strings.ReplaceAll(row[5], "‘", "")
 									row[5] = strings.ReplaceAll(row[5], "'", "")
+									row[6] = strings.ReplaceAll(row[6], "‘", "")
 									row[6] = strings.ReplaceAll(row[6], "'", "")
 
 									dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
@@ -1020,6 +1251,7 @@ func element(w http.ResponseWriter, r *http.Request) {
 									_, err = db.Exec(dbsorov1)
 									if err != nil {
 										fmt.Println(err)
+										fmt.Println(row)
 										return
 
 									}
@@ -1028,6 +1260,14 @@ func element(w http.ResponseWriter, r *http.Request) {
 
 							}
 						} else {
+							row[1] = strings.ReplaceAll(row[1], "'", "")
+							row[2] = strings.ReplaceAll(row[2], "'", "")
+							row[3] = strings.ReplaceAll(row[3], "'", "")
+							row[4] = strings.ReplaceAll(row[4], "'", "")
+							row[5] = strings.ReplaceAll(row[5], "‘", "")
+							row[5] = strings.ReplaceAll(row[5], "'", "")
+							row[6] = strings.ReplaceAll(row[6], "‘", "")
+							row[6] = strings.ReplaceAll(row[6], "'", "")
 							dbsorov1 := fmt.Sprintf(`INSERT INTO import (qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, useri)
 					VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], name)
 							_, err = db.Exec(dbsorov1)
@@ -1128,7 +1368,9 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 				foydas := r.FormValue("foydas")
 				hujjats := r.FormValue("hujjats")
 				izoh := r.FormValue("izoh")
-
+				fios = strings.ReplaceAll(fios, "'", "")
+				manzils = strings.ReplaceAll(manzils, "'", "")
+				fios = strings.ReplaceAll(fios, "‘", "")
 				selyamiquery := fmt.Sprintf(`insert into selyami (fios, kods, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, users)
 			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, fios, urlcode, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, name)
 				_, err = db.Exec(selyamiquery)
@@ -1165,8 +1407,8 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 
 					queryinsert2 := fmt.Sprintf(`UPDATE selyami 
 				SET manzils = '%s', yashashs = '%s',
-				foydas = '%s', hujjats = '%s', users = '%s'
-				WHERE kods = '%s';`, irow.Manzili, irow.Umumiyi, irow.Yashashi, irow.Hujjati, name, irow.Kodi)
+				foydas = '%s', hujjats = '%s'
+				WHERE kods = '%s';`, irow.Manzili, irow.Umumiyi, irow.Yashashi, irow.Hujjati, irow.Kodi)
 					_, err = db.Exec(queryinsert2)
 					if err != nil {
 						fmt.Println(err)
@@ -1175,8 +1417,8 @@ func selyamilink(w http.ResponseWriter, r *http.Request) {
 
 					queryinsert3 := fmt.Sprintf(`UPDATE tarkib 
 				SET manzilt = '%s', yashasht = '%s',
-				foydat = '%s', hujjatt = '%s', usert = '%s'
-				WHERE kodt = '%s' AND relationt = 'О/Б';`, irow.Manzili, irow.Umumiyi, irow.Yashashi, irow.Hujjati, name, irow.Kodi)
+				foydat = '%s', hujjatt = '%s'
+				WHERE kodt = '%s' AND relationt = 'О/Б';`, irow.Manzili, irow.Umumiyi, irow.Yashashi, irow.Hujjati, irow.Kodi)
 
 					_, err = db.Exec(queryinsert3)
 					if err != nil {
@@ -1326,6 +1568,9 @@ func tarkiblink(w http.ResponseWriter, r *http.Request) {
 				foydat := r.FormValue("	foydat")
 				hujjatt := r.FormValue("hujjatt")
 				izoht := r.FormValue("izoht")
+				fiot = strings.ReplaceAll(fiot, "'", "")
+				fiot = strings.ReplaceAll(fiot, "‘", "")
+				manzilt = strings.ReplaceAll(manzilt, "'", "")
 
 				queryinsert := fmt.Sprintf(`insert into tarkib (fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, usert, idselyamit)
 			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, fiot, listurl[0], birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, name, listurl[2])
@@ -1393,7 +1638,8 @@ func selyamiexcel(w http.ResponseWriter, r *http.Request) {
 	sorov.Scan(&name)
 
 	if name == msg && msg != "" {
-		if r.FormValue("exwork") == "" {
+
+		if r.Method == "GET" {
 			tem, err := template.ParseFiles("template/element.html")
 			if err != nil {
 				fmt.Println(err)
@@ -1402,7 +1648,7 @@ func selyamiexcel(w http.ResponseWriter, r *http.Request) {
 
 			tem.Execute(w, nil)
 		} else {
-
+			defer http.Redirect(w, r, "/information", 307)
 			body := &bytes.Buffer{}
 			writer := multipart.NewWriter(body)
 
@@ -1436,14 +1682,43 @@ func selyamiexcel(w http.ResponseWriter, r *http.Request) {
 
 			rows, err := exfile.GetRows(getsheet[0])
 			length := len(rows[0])
+
 			if length == 12 {
 				for _, row := range rows {
+					row[0] = strings.ReplaceAll(row[0], "‘", "")
+					row[0] = strings.ReplaceAll(row[0], "'", "")
+					row[5] = strings.ReplaceAll(row[5], "‘", "")
+
+					row[1] = strings.ReplaceAll(row[1], "	", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[1] = strings.ReplaceAll(row[1], " ", "")
+					row[3] = strings.ReplaceAll(row[3], "	", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], " ", "")
+					row[3] = strings.ReplaceAll(row[3], "б", "Б")
+					row[3] = strings.ReplaceAll(row[3], "о", "О")
+					row[5] = strings.ReplaceAll(row[5], "'", "")
+					row[11] = strings.ReplaceAll(row[11], "'", "")
 
 					selyamiquery := fmt.Sprintf(`insert into selyami (fios, kods, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, users)
 					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], name)
 					_, err = db.Exec(selyamiquery)
 					if err != nil {
 						fmt.Println(err)
+						fmt.Println(row)
 						return
 					}
 
@@ -1458,6 +1733,7 @@ func selyamiexcel(w http.ResponseWriter, r *http.Request) {
 					_, err = db.Exec(selyamilinkquery)
 					if err != nil {
 						fmt.Println(err)
+						fmt.Println(row)
 						return
 					}
 
@@ -1514,6 +1790,8 @@ func changego(w http.ResponseWriter, r *http.Request) {
 				foydat := r.FormValue("	foydat")
 				hujjatt := r.FormValue("hujjatt")
 				izoht := r.FormValue("izoht")
+				fiot = strings.ReplaceAll(fiot, "'", "")
+				manzilt = strings.ReplaceAll(manzilt, "'", "")
 				if r.FormValue("relationt") == "О/Б" {
 					queryinsert := fmt.Sprintf(`UPDATE tarkib 
 			SET fiot = '%s', kodt = '%s', birtht = '%s', relationt = '%s', jont = '%s', manzilt = '%s', raqamt = '%s', vaqtt = '%s', yashasht = '%s',
@@ -1654,6 +1932,7 @@ func compensation(w http.ResponseWriter, r *http.Request) {
 				ijaramc := r.FormValue("ijaramc")
 				protokolc := r.FormValue("protokolc")
 				orderc := r.FormValue("orderc")
+				manzilc = strings.ReplaceAll(manzilc, "'", "")
 
 				queryinsert := fmt.Sprintf(`insert into compensation (kodimport, visionc, kodc, manzilc, maydonc, xonac, yermaydonc, bozorc, ijarac, ijaramc, protokolc, orderc, userc, idselyamic)
 			values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, listurl[0], visionc, kodc, manzilc, maydonc, xonac, yermaydonc, bozorc, ijarac, ijaramc, protokolc, orderc, name, listurl[1])
@@ -1871,4 +2150,260 @@ func comchange(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+}
+
+// Copyi qwe
+type Copyi struct {
+	ID              string
+	Qaror           string
+	Tuman           string
+	Mahalla         string
+	Kod             string
+	Nedvijimost     string
+	Pravoobladatel  string
+	Soprovoditelniy string
+	Pzuo            string
+	Po              string
+	Pj              string
+	Xona            string
+	Datei           string
+	Useri           string
+}
+
+func delete(w http.ResponseWriter, r *http.Request) {
+
+	qwe := sessionManager.Keys(r.Context())
+	if len(qwe) == 1 {
+		msg := sessionManager.GetString(r.Context(), qwe[0])
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+		sorov := db.QueryRow(getuserval)
+		var name string
+
+		sorov.Scan(&name)
+
+		if name == msg && msg != "" {
+
+			urlcode := r.URL.Path
+			urlcode = strings.ReplaceAll(urlcode, "/delete/", "")
+
+			vicopy := fmt.Sprintf(`select * from import where kod = '%s'`, urlcode)
+
+			vicopyq := db.QueryRow(vicopy)
+
+			goes := new(Copyi)
+
+			vicopyq.Scan(&goes.ID, &goes.Qaror, &goes.Tuman, &goes.Mahalla, &goes.Kod, &goes.Nedvijimost, &goes.Pravoobladatel, &goes.Soprovoditelniy, &goes.Pzuo, &goes.Po, &goes.Pj, &goes.Xona, &goes.Datei, &goes.Useri)
+			status := "Deleted"
+			queryinsert := fmt.Sprintf(`insert into copyi (statusi, id, qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, datei, useri, useric)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')`, status, goes.ID, goes.Qaror, goes.Tuman, goes.Mahalla, goes.Kod, goes.Nedvijimost, goes.Pravoobladatel, goes.Soprovoditelniy, goes.Pzuo, goes.Po, goes.Pj, goes.Xona, goes.Datei, goes.Useri, name)
+
+			_, err := db.Exec(queryinsert)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			kodlist := fmt.Sprintf(`delete from import where kod = '%s';`, urlcode)
+			_, err = db.Exec(kodlist)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			http.Redirect(w, r, "/information", 307)
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+		}
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+	}
+}
+
+func cleango(w http.ResponseWriter, r *http.Request) {
+
+	qwe := sessionManager.Keys(r.Context())
+
+	if len(qwe) == 1 {
+		msg := sessionManager.GetString(r.Context(), qwe[0])
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+		sorov := db.QueryRow(getuserval)
+		var name string
+
+		sorov.Scan(&name)
+
+		if name == msg && msg != "" {
+
+			var checkkod string
+			var fiosgo string
+			var fiotgo string
+			urlcode := r.URL.Path
+			urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+			listurl := strings.Split(urlcode, "*")
+			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
+			kodval := db.QueryRow(kodlist)
+			kodval.Scan(&checkkod)
+
+			fiotch := fmt.Sprintf(`select fiot from tarkib where kodt = '%s' AND idt = '%s';`, listurl[0], listurl[4])
+			fiotchq := db.QueryRow(fiotch)
+			fiotchq.Scan(&fiotgo)
+
+			fiosch := fmt.Sprintf(`select fios from selyami where kods = '%s' AND ids = '%s';`, listurl[0], listurl[2])
+			fioschq := db.QueryRow(fiosch)
+			fioschq.Scan(&fiosgo)
+			status := "Deleted"
+
+			if fiotgo != fiosgo && listurl[0] == checkkod {
+				redir := fmt.Sprintf(`/selyami/%s*tarkib*%s`, listurl[0], listurl[2])
+				defer http.Redirect(w, r, redir, 307)
+
+				hit := fmt.Sprintf(`select * from tarkib where idt = '%s'`, listurl[4])
+				hitq := db.QueryRow(hit)
+
+				action := new(Copyt)
+				err := hitq.Scan(&action.Idt, &action.Fiot, &action.Kodt, &action.Birtht, &action.Relationt, &action.Jont, &action.Manzilt, &action.Raqamt, &action.Vaqtt, &action.Yashasht, &action.Foydat, &action.Hujjatt, &action.Izoht, &action.Timet, &action.Usert, &action.Idselyamit)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+				selyamilinkquery := fmt.Sprintf(`insert into copyt (statust, idt, fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, timet, usert, idselyamit, usertc)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, status, action.Idt, action.Fiot, action.Kodt, action.Birtht, action.Relationt, action.Jont, action.Manzilt, action.Raqamt, action.Vaqtt, action.Yashasht, action.Foydat, action.Hujjatt, action.Izoht, action.Timet, action.Usert, action.Idselyamit, name)
+
+				_, err = db.Exec(selyamilinkquery)
+				if err != nil {
+					fmt.Println(err)
+
+					return
+				}
+
+				cleant := fmt.Sprintf(`delete from tarkib where idt = '%s';`, listurl[4])
+				_, err = db.Exec(cleant)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			} else {
+				tem, err := template.ParseFiles("template/error.html")
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				tem.Execute(w, nil)
+
+			}
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+
+		}
+
+	}
+}
+
+func chop(w http.ResponseWriter, r *http.Request) {
+
+	qwe := sessionManager.Keys(r.Context())
+
+	if len(qwe) == 1 {
+		msg := sessionManager.GetString(r.Context(), qwe[0])
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+		sorov := db.QueryRow(getuserval)
+		var name string
+
+		sorov.Scan(&name)
+
+		if name == msg && msg != "" {
+
+			var checkkod string
+
+			urlcode := r.URL.Path
+			urlcode = strings.ReplaceAll(urlcode, "/selyami/", "")
+			listurl := strings.Split(urlcode, "*")
+			kodlist := fmt.Sprintf(`select kod from import where kod = '%s';`, listurl[0])
+			kodval := db.QueryRow(kodlist)
+			kodval.Scan(&checkkod)
+
+			if listurl[0] == checkkod {
+				redir := fmt.Sprintf(`/selyami/%s`, listurl[0])
+				defer http.Redirect(w, r, redir, 307)
+				his := fmt.Sprintf(`select * from selyami where ids = '%s'`, listurl[2])
+				hisq := db.QueryRow(his)
+				move := new(Copys)
+				hisq.Scan(&move.Ids, &move.Fios, &move.Kods, &move.Births, &move.Relations, &move.Jons, &move.Manzils, &move.Raqams, &move.Vaqts, &move.Yashashs, &move.Foydas, &move.Hujjats, &move.Izoh, &move.Times, &move.Users)
+				status := "Deleted"
+				selyamiquery := fmt.Sprintf(`insert into copys (statuss, ids, fios, kods, births, relations, jons, manzils, raqams, vaqts, yashashs, foydas, hujjats, izoh, times, users, usersc)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s','%s', '%s','%s', '%s');`, status, move.Ids, move.Fios, move.Kods, move.Births, move.Relations, move.Jons, move.Manzils, move.Raqams, move.Vaqts, move.Yashashs, move.Foydas, move.Hujjats, move.Izoh, move.Times, move.Users, name)
+				_, err := db.Exec(selyamiquery)
+				if err != nil {
+					fmt.Println(err)
+
+					return
+				}
+
+				hit := fmt.Sprintf(`select * from tarkib where idselyamit = '%s'`, listurl[2])
+				hitq, err := db.Query(hit)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				for hitq.Next() {
+					action := new(Copyt)
+					hitq.Scan(&action.Idt, &action.Fiot, &action.Kodt, &action.Birtht, &action.Relationt, &action.Jont, &action.Manzilt, &action.Raqamt, &action.Vaqtt, &action.Yashasht, &action.Foydat, &action.Hujjatt, &action.Izoht, &action.Timet, &action.Usert, &action.Idselyamit)
+
+					selyamilinkquery := fmt.Sprintf(`insert into copyt (statust, idt, fiot, kodt, birtht, relationt, jont, manzilt, raqamt, vaqtt, yashasht, foydat, hujjatt, izoht, timet, usert, idselyamit, usertc)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');`, status, action.Idt, action.Fiot, action.Kodt, action.Birtht, action.Relationt, action.Jont, action.Manzilt, action.Raqamt, action.Vaqtt, action.Yashasht, action.Foydat, action.Hujjatt, action.Izoht, action.Timet, action.Usert, action.Idselyamit, name)
+
+					_, err = db.Exec(selyamilinkquery)
+					if err != nil {
+						fmt.Println(err)
+
+						return
+					}
+				}
+
+				cleans := fmt.Sprintf(`delete from tarkib where idselyamit = '%s';`, listurl[2])
+				_, err = db.Exec(cleans)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				cleant := fmt.Sprintf(`delete from selyami where ids = '%s';`, listurl[2])
+				_, err = db.Exec(cleant)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			} else {
+				tem, err := template.ParseFiles("template/error.html")
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				tem.Execute(w, nil)
+
+			}
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+
+		}
+
+	}
 }

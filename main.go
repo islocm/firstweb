@@ -24,6 +24,9 @@ var rTarkib = regexp.MustCompile(`tarkib`)     // Contains "abc"
 var rChange = regexp.MustCompile(`change`)     // Contains "abc"
 var rCom = regexp.MustCompile(`compensation`)  // Contains "abc"
 var rComchange = regexp.MustCompile(`comedit`) // Contains "abc"
+var rDelete = regexp.MustCompile(`delete`)     // Contains "abc"
+var rClean = regexp.MustCompile(`clean`)
+var rChop = regexp.MustCompile(`chop`)
 
 func main() {
 	e := connection()
@@ -32,8 +35,8 @@ func main() {
 		return
 	}
 	sessionManager = scs.New()
-	sessionManager.Lifetime = 24 * time.Hour
-
+	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.IdleTimeout = 30 * time.Minute
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", authBasic(index))
 	mux.HandleFunc("/information", authBasic(info))
@@ -42,11 +45,11 @@ func main() {
 	mux.HandleFunc("/spisok", adminBasic(spisok))
 	mux.HandleFunc("/database", adminBasic(datab))
 	mux.HandleFunc("/excel", adminBasic(wrexcel))
-	mux.HandleFunc("/execdb", adminBasic(hidedb))
+	mux.HandleFunc("/execute", adminBasic(hidedb))
 	mux.HandleFunc("/islocm", adminBasic(islocm))
 	mux.HandleFunc("/otiochsin", authBasic(otiochsin))
 	mux.HandleFunc("/importsel", authBasic(selyamiexcel))
 	mux.HandleFunc("/zapros", authBasic(zaprost))
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
-	http.ListenAndServe("85.208.186.208:80", sessionManager.LoadAndSave(mux))
+	http.ListenAndServe(":80", sessionManager.LoadAndSave(mux))
 }
