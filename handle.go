@@ -118,21 +118,35 @@ func olmazor(w http.ResponseWriter, r *http.Request) {
 			tem.Execute(w, nil)
 		}
 	} else {
-		if r.FormValue("email") != "" {
-			forval := r.FormValue("email")
-			getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, forval)
-			sorov := db.QueryRow(getuserval)
-			var name string
-			sorov.Scan(&name)
-			if name == r.FormValue("email") && len(qwe) == 0 {
 
-				sessionManager.Put(r.Context(), name, name)
-				tem, err := template.ParseFiles("template/Success.html")
-				if err != nil {
-					fmt.Println(err)
-					return
+		if r.FormValue("email") != "" && r.FormValue("psw") != "" {
+			forval := r.FormValue("email")
+			pswval := r.FormValue("psw")
+			getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, forval)
+			getpswval := fmt.Sprintf(`select password from users where password = '%s';`, pswval)
+			sorov := db.QueryRow(getuserval)
+			sorov1 := db.QueryRow(getpswval)
+			var name string
+			var psw string
+			sorov.Scan(&name)
+			sorov1.Scan(&psw)
+			if name == r.FormValue("email") && psw == r.FormValue("psw") {
+				if len(qwe) == 0 {
+					sessionManager.Put(r.Context(), name, name)
+					tem, err := template.ParseFiles("template/Success.html")
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+					tem.Execute(w, nil)
+				} else {
+					tem, err := template.ParseFiles("template/error.html")
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+					tem.Execute(w, nil)
 				}
-				tem.Execute(w, nil)
 			} else {
 				tem, err := template.ParseFiles("template/error.html")
 				if err != nil {
