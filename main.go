@@ -50,6 +50,9 @@ func main() {
 	mux.HandleFunc("/otiochsin", authBasic(otiochsin))
 	mux.HandleFunc("/importsel", authBasic(selyamiexcel))
 	mux.HandleFunc("/zapros", authBasic(zaprost))
+	mux.HandleFunc("/rootfile", authBasic(filetofiles))
+	mux.HandleFunc("/qwe", authBasic(redspecial))
 	mux.Handle("/source/", http.StripPrefix("/source", http.FileServer(http.Dir("./assets"))))
+	mux.Handle("/special/", http.StripPrefix("/special", http.FileServer(http.Dir("./files"))))
 	http.ListenAndServe(":80", sessionManager.LoadAndSave(mux))
 }

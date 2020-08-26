@@ -2421,3 +2421,108 @@ func chop(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+
+func filetofiles(w http.ResponseWriter, r *http.Request) {
+	qwe := sessionManager.Keys(r.Context())
+	if len(qwe) == 1 {
+		msg := sessionManager.GetString(r.Context(), qwe[0])
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+		sorov := db.QueryRow(getuserval)
+		var name string
+
+		sorov.Scan(&name)
+
+		if name == msg && msg != "" {
+
+			if r.Method == "GET" {
+				tem, err := template.ParseFiles("template/rootfile.html")
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+				tem.Execute(w, nil)
+			} else if r.FormValue("delete") != "" {
+				defer http.Redirect(w, r, "/special", 307)
+				www := r.FormValue("delete")
+				err := os.Remove("./files/" + www)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+			} else {
+				defer http.Redirect(w, r, "/special", 307)
+				body := &bytes.Buffer{}
+				writer := multipart.NewWriter(body)
+
+				r.Header.Add("Content-Type", writer.FormDataContentType())
+				r.ParseMultipartForm(32 << 20)
+				file, header, err := r.FormFile("exwork")
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+				f, err := os.OpenFile("./files/"+header.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+				io.Copy(f, file)
+
+				defer f.Close()
+				defer file.Close()
+			}
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+
+		}
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
+	}
+}
+
+func redspecial(w http.ResponseWriter, r *http.Request) {
+	qwe := sessionManager.Keys(r.Context())
+	if len(qwe) == 1 {
+		msg := sessionManager.GetString(r.Context(), qwe[0])
+		getuserval := fmt.Sprintf(`select useru from users where useru = '%s';`, msg)
+		sorov := db.QueryRow(getuserval)
+		var name string
+
+		sorov.Scan(&name)
+
+		if name == msg && msg != "" {
+			http.Redirect(w, r, "/special", 307)
+
+		} else {
+			tem, err := template.ParseFiles("template/error.html")
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			tem.Execute(w, nil)
+
+		}
+	} else {
+		tem, err := template.ParseFiles("template/error.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		tem.Execute(w, nil)
+
+	}
+}
