@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -2525,4 +2526,60 @@ func redspecial(w http.ResponseWriter, r *http.Request) {
 		tem.Execute(w, nil)
 
 	}
+}
+
+type importexcel struct {
+	id              string
+	qaror           string
+	tuman           string
+	mahalla         string
+	kod             string
+	nedvijimost     string
+	pravoobladatel  string
+	soprovoditelniy string
+	pzuo            string
+	po              string
+	pj              string
+	xona            string
+	datei           string
+	useri           string
+}
+
+func newexceltofiles(w http.ResponseWriter, r *http.Request) {
+	created := excelize.NewFile()
+
+	getimportdata, err := db.Query("select id, qaror, tuman, mahalla, kod, nedvijimost, pravoobladatel, soprovoditelniy, pzuo, po, pj, xona, datei, useri from import")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// importtool := new(importexcel)
+	var importtool importexcel
+	// active := created.NewSheet("Information")
+	num := 1
+	for getimportdata.Next() {
+		getimportdata.Scan(&importtool.id, &importtool.qaror, &importtool.tuman, &importtool.mahalla, &importtool.kod, &importtool.nedvijimost, &importtool.pravoobladatel, &importtool.soprovoditelniy, &importtool.pzuo, &importtool.po, &importtool.pj, &importtool.xona, &importtool.datei, &importtool.useri)
+		addnum := strconv.Itoa(num)
+		created.SetCellValue("Sheet1", "A"+addnum, importtool.id)
+		created.SetCellValue("Sheet1", "B"+addnum, importtool.qaror)
+		created.SetCellValue("Sheet1", "C"+addnum, importtool.tuman)
+		created.SetCellValue("Sheet1", "D"+addnum, importtool.mahalla)
+		created.SetCellValue("Sheet1", "E"+addnum, importtool.kod)
+		created.SetCellValue("Sheet1", "F"+addnum, importtool.nedvijimost)
+		created.SetCellValue("Sheet1", "G"+addnum, importtool.pravoobladatel)
+		created.SetCellValue("Sheet1", "H"+addnum, importtool.soprovoditelniy)
+		created.SetCellValue("Sheet1", "I"+addnum, importtool.pzuo)
+		created.SetCellValue("Sheet1", "J"+addnum, importtool.po)
+		created.SetCellValue("Sheet1", "K"+addnum, importtool.pj)
+		created.SetCellValue("Sheet1", "L"+addnum, importtool.xona)
+		created.SetCellValue("Sheet1", "M"+addnum, importtool.datei)
+		created.SetCellValue("Sheet1", "N"+addnum, importtool.useri)
+		num = num + 1
+
+	}
+
+	// created.SetActiveSheet(active)
+
+	created.SaveAs("./files/import.xlsx")
+
 }
