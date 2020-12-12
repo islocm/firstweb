@@ -2543,6 +2543,7 @@ type importexcel struct {
 	xona            string
 	datei           string
 	useri           string
+	selyami         string
 }
 
 func newexceltofiles(w http.ResponseWriter, r *http.Request) {
@@ -2581,5 +2582,85 @@ func newexceltofiles(w http.ResponseWriter, r *http.Request) {
 	// created.SetActiveSheet(active)
 
 	created.SaveAs("./files/import.xlsx")
+
+}
+
+func newexceltofilesselyami(w http.ResponseWriter, r *http.Request) {
+	created := excelize.NewFile()
+
+	getimportdata, err := db.Query("select * from selyami")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// importtool := new(importexcel)
+	var importtool importexcel
+	// active := created.NewSheet("Information")
+	num := 1
+	for getimportdata.Next() {
+		getimportdata.Scan(&importtool.id, &importtool.qaror, &importtool.tuman, &importtool.mahalla, &importtool.kod, &importtool.nedvijimost, &importtool.pravoobladatel, &importtool.soprovoditelniy, &importtool.pzuo, &importtool.po, &importtool.pj, &importtool.xona, &importtool.datei, &importtool.useri, &importtool.selyami)
+		addnum := strconv.Itoa(num)
+		created.SetCellValue("Sheet1", "A"+addnum, importtool.id)
+		created.SetCellValue("Sheet1", "B"+addnum, importtool.qaror)
+		created.SetCellValue("Sheet1", "C"+addnum, importtool.tuman)
+		created.SetCellValue("Sheet1", "D"+addnum, importtool.mahalla)
+		created.SetCellValue("Sheet1", "E"+addnum, importtool.kod)
+		created.SetCellValue("Sheet1", "F"+addnum, importtool.nedvijimost)
+		created.SetCellValue("Sheet1", "G"+addnum, importtool.pravoobladatel)
+		created.SetCellValue("Sheet1", "H"+addnum, importtool.soprovoditelniy)
+		created.SetCellValue("Sheet1", "I"+addnum, importtool.pzuo)
+		created.SetCellValue("Sheet1", "J"+addnum, importtool.po)
+		created.SetCellValue("Sheet1", "K"+addnum, importtool.pj)
+		created.SetCellValue("Sheet1", "L"+addnum, importtool.xona)
+		created.SetCellValue("Sheet1", "M"+addnum, importtool.datei)
+		created.SetCellValue("Sheet1", "N"+addnum, importtool.useri)
+		created.SetCellValue("Sheet1", "O"+addnum, importtool.useri)
+		num = num + 1
+
+	}
+
+	// created.SetActiveSheet(active)
+
+	created.SaveAs("./files/selyami.xlsx")
+
+}
+
+func newexceltofilestarkib(w http.ResponseWriter, r *http.Request) {
+	created := excelize.NewFile()
+
+	getimportdata, err := db.Query("select * from tarkib")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// importtool := new(importexcel)
+	var importtool importexcel
+	// active := created.NewSheet("Information")
+	num := 1
+	for getimportdata.Next() {
+		getimportdata.Scan(&importtool.id, &importtool.qaror, &importtool.tuman, &importtool.mahalla, &importtool.kod, &importtool.nedvijimost, &importtool.pravoobladatel, &importtool.soprovoditelniy, &importtool.pzuo, &importtool.po, &importtool.pj, &importtool.xona, &importtool.datei, &importtool.useri, &importtool.selyami)
+		addnum := strconv.Itoa(num)
+		created.SetCellValue("Sheet1", "A"+addnum, importtool.id)
+		created.SetCellValue("Sheet1", "B"+addnum, importtool.qaror)
+		created.SetCellValue("Sheet1", "C"+addnum, importtool.tuman)
+		created.SetCellValue("Sheet1", "D"+addnum, importtool.mahalla)
+		created.SetCellValue("Sheet1", "E"+addnum, importtool.kod)
+		created.SetCellValue("Sheet1", "F"+addnum, importtool.nedvijimost)
+		created.SetCellValue("Sheet1", "G"+addnum, importtool.pravoobladatel)
+		created.SetCellValue("Sheet1", "H"+addnum, importtool.soprovoditelniy)
+		created.SetCellValue("Sheet1", "I"+addnum, importtool.pzuo)
+		created.SetCellValue("Sheet1", "J"+addnum, importtool.po)
+		created.SetCellValue("Sheet1", "K"+addnum, importtool.pj)
+		created.SetCellValue("Sheet1", "L"+addnum, importtool.xona)
+		created.SetCellValue("Sheet1", "M"+addnum, importtool.datei)
+		created.SetCellValue("Sheet1", "N"+addnum, importtool.useri)
+		created.SetCellValue("Sheet1", "O"+addnum, importtool.useri)
+		num = num + 1
+
+	}
+
+	// created.SetActiveSheet(active)
+
+	created.SaveAs("./files/selyami.xlsx")
 
 }
