@@ -2544,6 +2544,7 @@ type importexcel struct {
 	datei           string
 	useri           string
 	selyami         string
+	idselyami       string
 }
 
 func newexceltofiles(w http.ResponseWriter, r *http.Request) {
@@ -2638,7 +2639,7 @@ func newexceltofilestarkib(w http.ResponseWriter, r *http.Request) {
 	// active := created.NewSheet("Information")
 	num := 1
 	for getimportdata.Next() {
-		getimportdata.Scan(&importtool.id, &importtool.qaror, &importtool.tuman, &importtool.mahalla, &importtool.kod, &importtool.nedvijimost, &importtool.pravoobladatel, &importtool.soprovoditelniy, &importtool.pzuo, &importtool.po, &importtool.pj, &importtool.xona, &importtool.datei, &importtool.useri, &importtool.selyami)
+		getimportdata.Scan(&importtool.id, &importtool.qaror, &importtool.tuman, &importtool.mahalla, &importtool.kod, &importtool.nedvijimost, &importtool.pravoobladatel, &importtool.soprovoditelniy, &importtool.pzuo, &importtool.po, &importtool.pj, &importtool.xona, &importtool.datei, &importtool.useri, &importtool.selyami, &importtool.idselyami)
 		addnum := strconv.Itoa(num)
 		created.SetCellValue("Sheet1", "A"+addnum, importtool.id)
 		created.SetCellValue("Sheet1", "B"+addnum, importtool.qaror)
@@ -2655,12 +2656,13 @@ func newexceltofilestarkib(w http.ResponseWriter, r *http.Request) {
 		created.SetCellValue("Sheet1", "M"+addnum, importtool.datei)
 		created.SetCellValue("Sheet1", "N"+addnum, importtool.useri)
 		created.SetCellValue("Sheet1", "O"+addnum, importtool.selyami)
+		created.SetCellValue("Sheet1", "P"+addnum, importtool.idselyami)
 		num = num + 1
 
 	}
 
 	// created.SetActiveSheet(active)
 
-	created.SaveAs("./files/selyami.xlsx")
+	created.SaveAs("./files/tarkib.xlsx")
 
 }
