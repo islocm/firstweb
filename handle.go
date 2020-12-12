@@ -2614,7 +2614,7 @@ func newexceltofilesselyami(w http.ResponseWriter, r *http.Request) {
 		created.SetCellValue("Sheet1", "L"+addnum, importtool.xona)
 		created.SetCellValue("Sheet1", "M"+addnum, importtool.datei)
 		created.SetCellValue("Sheet1", "N"+addnum, importtool.useri)
-		created.SetCellValue("Sheet1", "O"+addnum, importtool.useri)
+		created.SetCellValue("Sheet1", "O"+addnum, importtool.selyami)
 		num = num + 1
 
 	}
@@ -2654,7 +2654,7 @@ func newexceltofilestarkib(w http.ResponseWriter, r *http.Request) {
 		created.SetCellValue("Sheet1", "L"+addnum, importtool.xona)
 		created.SetCellValue("Sheet1", "M"+addnum, importtool.datei)
 		created.SetCellValue("Sheet1", "N"+addnum, importtool.useri)
-		created.SetCellValue("Sheet1", "O"+addnum, importtool.useri)
+		created.SetCellValue("Sheet1", "O"+addnum, importtool.selyami)
 		num = num + 1
 
 	}
